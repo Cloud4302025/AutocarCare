@@ -5,87 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cd7e60a2-7d57-4d6a-a833-5dc280398d56" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/BankDepositController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/BorrowController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/EmployeePaymentsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/BankDepositDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/BorrowDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/EmployeePaymentsDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/UpdateEmployeePaymentRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/BankDeposit.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/Borrow.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/EmployeePayments.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/BankDepositRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/BorrowRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/EmployeePaymentsRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/BankDepositService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/BorrowService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/EmployeePaymentsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/BankDepositServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/BorrowServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/EmployeePaymentsServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/vender/ResponseAllVendorDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CarAutoCare/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CarAutoCare/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CarAutoCare/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CarAutoCare/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CarAutoCare/.idea/jpa-buddy.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CarAutoCare/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CarAutoCare/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CarAutoCare/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/MapperClasses/EmployeeMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/MapperClasses/EmployeeMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/CustomerDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/CustomerDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/EmployeeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/EmployeeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/VendorPartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/VendorPartController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/EmployeeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/EmployeeDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/VendorPartDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/VendorPartDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/Employee.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/Employee.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/VendorPart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/VendorPart.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/jwt/impl/JwtServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/jwt/impl/JwtServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/EmployeeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/EmployeeRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/RoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/RoleRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/VendorPartRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/VendorPartRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/EmployeeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/EmployeeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/VendorPartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/VendorPartService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/security/UserDetailsServiceCustom.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/security/UserDetailsServiceCustom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/VendorPartServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/VendorPartServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/utils/LRIUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/utils/LRIUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/vender/VendorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/vender/VendorController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/vender/VendorServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/vender/VendorServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/MapperClasses/EmployeeMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/MapperClasses/EmployeeMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto$CreateSparePartTransactionDtoBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto$CreateSparePartTransactionDtoBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/controller/CustomerDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/controller/CustomerDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/controller/EmployeeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/controller/EmployeeController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/controller/VendorPartController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/controller/VendorPartController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/EmployeeDTO$EmployeeDTOBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/EmployeeDTO$EmployeeDTOBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/EmployeeDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/EmployeeDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/VendorPartDto$VendorPartDtoBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/VendorPartDto$VendorPartDtoBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/VendorPartDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/VendorPartDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/Employee$EmployeeBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/Employee$EmployeeBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/Employee.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/Employee.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/VendorPart$VendorPartBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/VendorPart$VendorPartBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/VendorPart.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/VendorPart.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/jwt/impl/JwtServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/jwt/impl/JwtServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/repository/EmployeeRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/repository/EmployeeRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/repository/VendorPartRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/repository/VendorPartRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/service/EmployeeService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/service/EmployeeService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/service/VendorPartService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/service/VendorPartService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/service/impl/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/service/impl/UserServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/service/security/UserDetailsServiceCustom.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/service/security/UserDetailsServiceCustom.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/serviceImpl/VendorPartServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/serviceImpl/VendorPartServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/utils/LRIUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/utils/LRIUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/vender/VendorController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/vender/VendorController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/vender/VendorServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/vender/VendorServiceImpl.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,18 +28,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Ashutosh7796"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Ashutosh7796&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/cloud202555/auto03.git",
-    "accountId": "32053628-87f4-443c-9469-7e8a96cd0b4b"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/cloud202555/auto03.git&quot;,
+    &quot;accountId&quot;: &quot;32053628-87f4-443c-9469-7e8a96cd0b4b&quot;
   }
-}]]></component>
+}</component>
   <component name="JpbToolWindowState">
     <option name="isToolWindowVisible" value="false" />
   </component>
@@ -131,16 +55,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.JwtWithSpringSecurityApplication.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Ash",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.JwtWithSpringSecurityApplication.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Ash&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="JwtWithSpringSecurityApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.spring.jwt.JwtWithSpringSecurityApplication" />
@@ -184,5 +108,16 @@
       <updated>1744700027685</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
