@@ -26,7 +26,6 @@ public class ManageTermsController {
                     .body(ResponseDto.error("Failed to create terms", e.getMessage()));
         }
     }
-
     @GetMapping("/all")
     public ResponseEntity<ResponseDto<List<ManageTermsDto>>> getAll() {
         try {
