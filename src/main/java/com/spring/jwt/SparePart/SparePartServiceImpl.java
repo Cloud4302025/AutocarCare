@@ -121,7 +121,6 @@ public class SparePartServiceImpl implements SparePartService {
                 .buyingPrice(sparePart.getBuyingPrice())
                 .cGST(sparePart.getCGST())
                 .sGST(sparePart.getSGST())
-                .totalGST(sparePart.getTotalGST())
                 .buyingPrice(sparePart.getBuyingPrice())
                 .vendor(sparePart.getVendor())
                 .build()
