@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "spare_part")
 public class SparePart {
 
     @Id
@@ -40,11 +42,14 @@ public class SparePart {
     @Column(name = "update_At", nullable = false)
     private LocalDate updateAt;
 
-    @ElementCollection
-    @CollectionTable(name = "spare_part_photos", joinColumns = @JoinColumn(name = "spare_part_id"))
-    @BatchSize(size = 10)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "spare_part_photos",
+            joinColumns = @JoinColumn(name = "spare_part_id", nullable = false)
+    )
     @Column(name = "photo", columnDefinition = "LONGBLOB")
-    private List<byte[]> photo;
+    @BatchSize(size = 10)
+    private List<byte[]> photo = new ArrayList<>();
 
     @Column(name = "part_number", nullable = false)
     private String partNumber;

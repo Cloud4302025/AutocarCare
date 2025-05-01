@@ -73,9 +73,10 @@ public class SparePartServiceImpl implements SparePartService {
         }
 
         try {
-            // Improved image processing with better error handling
+            // Initialize empty list to avoid nulls
             List<byte[]> compressedPhotos = new ArrayList<>();
 
+            // Process photos only if available
             if (photos != null && !photos.isEmpty()) {
                 for (MultipartFile file : photos) {
                     try {
@@ -112,28 +113,36 @@ public class SparePartServiceImpl implements SparePartService {
             }
 
             // Even if some images failed, proceed with the images that worked
-            logger.info("Processed {} images successfully out of {} total", compressedPhotos.size(), photos.size());
+            logger.info("Processed {} images successfully out of {} total",
+                    photos != null ? compressedPhotos.size() : 0,
+                    photos != null ? photos.size() : 0);
 
-            // Create the spare part WITHOUT setting the ID (let JPA/DB assign it)
-            SparePart sparePart = SparePart.builder()
-                    .partName(partName)
-                    .description(description)
-                    .manufacturer(cleanManufacturer)
-                    .price(price)
-                    .partNumber(cleanPartNumber)
-                    .photo(compressedPhotos)
-                    .updateAt(LocalDate.now())
-                    .sGST(sGST)
-                    .cGST(cGST)
-                    .buyingPrice(buyingPrice)
-                    .totalGST(totalGST)
-                    .build();
+            // Create the part with initialized lists
+            SparePart sparePart = new SparePart();
+            sparePart.setPartName(partName);
+            sparePart.setDescription(description);
+            sparePart.setManufacturer(cleanManufacturer);
+            sparePart.setPrice(price);
+            sparePart.setPartNumber(cleanPartNumber);
+            sparePart.setUpdateAt(LocalDate.now());
+            sparePart.setSGST(sGST);
+            sparePart.setCGST(cGST);
+            sparePart.setBuyingPrice(buyingPrice);
+            sparePart.setTotalGST(totalGST);
 
-            // Let the database assign the ID
+            // Initialize photo list and add photos
+            sparePart.setPhoto(new ArrayList<>());
+            if (!compressedPhotos.isEmpty()) {
+                sparePart.getPhoto().addAll(compressedPhotos);
+            }
+
+            // Save the part first - this will assign an ID
+            logger.info("Saving spare part with {} photos", compressedPhotos.size());
             sparePart = sparePartRepo.save(sparePart);
 
             logger.info("Saved new spare part with ID: {}", sparePart.getSparePartId());
 
+            // Now create user part
             UserPart userPart = UserPart.builder()
                     .partName(partName)
                     .description(description)
@@ -142,7 +151,7 @@ public class SparePartServiceImpl implements SparePartService {
                     .partNumber(cleanPartNumber)
                     .updateAt(LocalDate.now())
                     .quantity(0)
-                    .sparePart(sparePart)
+                    .sparePart(sparePart)  // Reference the saved part with ID
                     .lastUpdate(LocalDate.now().toString())
                     .sGST(sGST)
                     .cGST(cGST)
@@ -151,13 +160,16 @@ public class SparePartServiceImpl implements SparePartService {
                     .build();
 
             userPartRepo.save(userPart);
+            logger.info("Saved new user part for spare part ID: {}", sparePart.getSparePartId());
 
             return new BaseResponseDTO("Success", "Part Added Successfully");
 
         } catch (DataIntegrityViolationException e) {
-            logger.error("Database constraint violation: ", e);
-            if (e.getMessage().contains("Duplicate entry") && e.getMessage().contains("PRIMARY")) {
+            logger.error("Database constraint violation: {}", e.getMessage(), e);
+            if (e.getMessage() != null && e.getMessage().contains("Duplicate entry") && e.getMessage().contains("PRIMARY")) {
                 throw new BadRequestException("Database sequence issue. Please contact administrator.");
+            } else if (e.getMessage() != null && e.getMessage().contains("spare_part_id")) {
+                throw new BadRequestException("Failed to save part photos. Database error with spare_part_id.");
             } else {
                 throw new BadRequestException("Part number " + cleanPartNumber + " already exists.");
             }
