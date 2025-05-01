@@ -18,8 +18,7 @@ import java.util.List;
 public class SparePart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "sparePart_seq")
-    @SequenceGenerator(name = "sparePart_seq", sequenceName = "sparePart_seq", allocationSize = 1, initialValue = 10000)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sparePartId")
     private Integer sparePartId;
 

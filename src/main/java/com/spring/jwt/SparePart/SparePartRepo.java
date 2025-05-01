@@ -27,14 +27,6 @@ public interface SparePartRepo extends JpaRepository<SparePart, Integer>, JpaSpe
 
     Optional<SparePart> findByPartNumberAndManufacturer(String partNumber, String manufacturer);
 
-    @Query("SELECT s FROM SparePart s WHERE LOWER(s.partNumber) = LOWER(:partNumber) AND LOWER(s.manufacturer) = LOWER(:manufacturer)")
-    Optional<SparePart> findByPartNumberAndManufacturerIgnoreCase(@Param("partNumber") String partNumber, @Param("manufacturer") String manufacturer);
-
-//    @Query("select sp from SparePart sp left join fetch sp.photo" +
-//            " where " +
-//            "(lower(sp.partName) like :keyword or lower(sp.description) like :keyword or lower(sp.manufacturer) like :keyword or cast(sp.partNumber as string) like :keyword)")
-//    List<SparePart> searchByKeyword(@Param("keyword") String keyword);
-
     Page<SparePartProjection> findAllProjectedBy(Pageable pageable);
 
 }

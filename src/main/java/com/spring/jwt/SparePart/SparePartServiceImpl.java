@@ -40,14 +40,14 @@ public class SparePartServiceImpl implements SparePartService {
 
     @Override
     public BaseResponseDTO addPart(String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos,Integer sGST,Integer cGST,Integer totalGST,Integer buyingPrice) {
-        // Check if part exists with case-insensitive comparison
+        // Clean input data
         String cleanPartNumber = partNumber.trim();
         String cleanManufacturer = manufacturer.trim();
 
         // Log what we're checking to help diagnose the issue
         logger.info("Checking for duplicate part. Part Number: '{}', Manufacturer: '{}'", cleanPartNumber, cleanManufacturer);
 
-        // First check with exact match
+        // Check for existing part - simpler approach without the custom query
         Optional<SparePart> existingPart = sparePartRepo.findByPartNumberAndManufacturer(cleanPartNumber, cleanManufacturer);
 
         if (existingPart.isPresent()) {
@@ -55,10 +55,19 @@ public class SparePartServiceImpl implements SparePartService {
             throw new BadRequestException("Part with part number " + cleanPartNumber + " already exists for manufacturer " + cleanManufacturer);
         }
 
-        // Additional check with case-insensitive query (better performance than loading all parts)
-        Optional<SparePart> existingPartIgnoreCase = sparePartRepo.findByPartNumberAndManufacturerIgnoreCase(cleanPartNumber, cleanManufacturer);
+        // Case insensitive check using manual comparison
+        List<SparePart> allParts = sparePartRepo.findAll();
+        boolean duplicateFound = false;
 
-        if (existingPartIgnoreCase.isPresent()) {
+        for (SparePart part : allParts) {
+            if (part.getPartNumber().equalsIgnoreCase(cleanPartNumber) &&
+                    part.getManufacturer().equalsIgnoreCase(cleanManufacturer)) {
+                duplicateFound = true;
+                break;
+            }
+        }
+
+        if (duplicateFound) {
             logger.warn("Part with part number {} already exists for manufacturer {} (case-insensitive match)", cleanPartNumber, cleanManufacturer);
             throw new BadRequestException("Part with part number " + cleanPartNumber + " already exists for manufacturer " + cleanManufacturer + " (ignoring case)");
         }
@@ -74,6 +83,7 @@ public class SparePartServiceImpl implements SparePartService {
                     })
                     .toList();
 
+            // Create the spare part WITHOUT setting the ID (let JPA/DB assign it)
             SparePart sparePart = SparePart.builder()
                     .partName(partName)
                     .description(description)
@@ -88,8 +98,10 @@ public class SparePartServiceImpl implements SparePartService {
                     .totalGST(totalGST)
                     .build();
 
-
+            // Let the database assign the ID
             sparePart = sparePartRepo.save(sparePart);
+
+            logger.info("Saved new spare part with ID: {}", sparePart.getSparePartId());
 
             UserPart userPart = UserPart.builder()
                     .partName(partName)
@@ -112,8 +124,12 @@ public class SparePartServiceImpl implements SparePartService {
             return new BaseResponseDTO("Success", "Part Added Successfully");
 
         } catch (DataIntegrityViolationException e) {
-            logger.error("Duplicate part number error: ", e);
-            throw new BadRequestException("Part number " + cleanPartNumber + " already exists.");
+            logger.error("Database constraint violation: ", e);
+            if (e.getMessage().contains("Duplicate entry") && e.getMessage().contains("PRIMARY")) {
+                throw new BadRequestException("Database sequence issue. Please contact administrator.");
+            } else {
+                throw new BadRequestException("Part number " + cleanPartNumber + " already exists.");
+            }
         } catch (RuntimeException e) {
             logger.error("Error processing images: ", e);
             throw new BadRequestException("Failed to process images");
