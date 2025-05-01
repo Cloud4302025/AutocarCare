@@ -73,15 +73,46 @@ public class SparePartServiceImpl implements SparePartService {
         }
 
         try {
-            List<byte[]> compressedPhotos = photos.stream()
-                    .map(file -> {
-                        try {
-                            return ImageCompressionUtil.compressImage(file.getBytes());
-                        } catch (IOException e) {
-                            throw new RuntimeException("Failed to compress image", e);
+            // Improved image processing with better error handling
+            List<byte[]> compressedPhotos = new ArrayList<>();
+
+            if (photos != null && !photos.isEmpty()) {
+                for (MultipartFile file : photos) {
+                    try {
+                        if (file == null || file.isEmpty() || file.getBytes().length == 0) {
+                            logger.warn("Empty image file detected, skipping");
+                            continue;
                         }
-                    })
-                    .toList();
+
+                        // Log image details for debugging
+                        logger.info("Processing image: name={}, size={}, contentType={}",
+                                file.getOriginalFilename(),
+                                file.getSize(),
+                                file.getContentType());
+
+                        byte[] compressed = ImageCompressionUtil.compressImage(file.getBytes());
+
+                        if (compressed != null && compressed.length > 0) {
+                            compressedPhotos.add(compressed);
+                            logger.info("Successfully compressed image {} from {} bytes to {} bytes",
+                                    file.getOriginalFilename(),
+                                    file.getSize(),
+                                    compressed.length);
+                        } else {
+                            logger.warn("Image compression returned null or empty result for {}", file.getOriginalFilename());
+                        }
+                    } catch (IOException e) {
+                        logger.error("IO Exception processing image {}: {}", file.getOriginalFilename(), e.getMessage(), e);
+                        // Continue with other images instead of failing completely
+                    } catch (Exception e) {
+                        logger.error("Unexpected error processing image {}: {}", file.getOriginalFilename(), e.getMessage(), e);
+                        // Continue with other images instead of failing completely
+                    }
+                }
+            }
+
+            // Even if some images failed, proceed with the images that worked
+            logger.info("Processed {} images successfully out of {} total", compressedPhotos.size(), photos.size());
 
             // Create the spare part WITHOUT setting the ID (let JPA/DB assign it)
             SparePart sparePart = SparePart.builder()
@@ -131,8 +162,8 @@ public class SparePartServiceImpl implements SparePartService {
                 throw new BadRequestException("Part number " + cleanPartNumber + " already exists.");
             }
         } catch (RuntimeException e) {
-            logger.error("Error processing images: ", e);
-            throw new BadRequestException("Failed to process images");
+            logger.error("Error processing request: {}", e.getMessage(), e);
+            throw new BadRequestException("Failed to add part: " + e.getMessage());
         }
     }
 
