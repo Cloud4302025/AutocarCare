@@ -1,9 +1,10 @@
 package com.spring.jwt.jwt.impl;
 
-import com.spring.jwt.entity.User;
+import com.spring.jwt.entity.Employee;
 import com.spring.jwt.exception.BaseException;
 import com.spring.jwt.jwt.JwtConfig;
 import com.spring.jwt.jwt.JwtService;
+import com.spring.jwt.repository.EmployeeRepository;
 import com.spring.jwt.repository.UserRepository;
 import com.spring.jwt.service.security.UserDetailsCustom;
 import io.jsonwebtoken.*;
@@ -31,17 +32,20 @@ import java.util.stream.Collectors;
 public class JwtServiceImpl implements JwtService {
     private final UserRepository userRepository;
 
+    private final EmployeeRepository employeeRepository;
+
     private final JwtConfig jwtConfig;
 
     private final UserDetailsService userDetailsService;
 
     @Autowired
     public JwtServiceImpl(@Lazy JwtConfig jwtConfig, UserDetailsService userDetailsService,
-                          UserRepository userRepository) {
+                          UserRepository userRepository, EmployeeRepository employeeRepository) {
         this.jwtConfig = jwtConfig;
         this.userDetailsService = userDetailsService;
 
         this.userRepository = userRepository;
+        this.employeeRepository = employeeRepository;
     }
 
 
@@ -72,9 +76,8 @@ public class JwtServiceImpl implements JwtService {
 
         log.info("Roles: {}", roles);
 
-        Integer userId = null;
-
-        String firstName = userDetailsCustom.getFirstName();
+        Integer userId   = userDetailsCustom.getUserId();
+        String  firstName = userDetailsCustom.getFirstName();
 
         if (roles.contains("USER")) {
             userId = userDetailsCustom.getUserId();
@@ -83,23 +86,32 @@ public class JwtServiceImpl implements JwtService {
         if (roles.contains("ADMIN")) {
             userId = userDetailsCustom.getUserId();
         }
+        List<String> componentNames = null;
+        if (roles.contains("EMPLOYEE")) {
+            Employee employee = employeeRepository.findByUser_Id(userId)
+                    .orElseThrow(() -> new BaseException(
+                            String.valueOf(HttpStatus.NOT_FOUND.value()),
+                            "Employee not found for userId: "
+                    ));
+            componentNames = employee.getComponentNames();
+        }
         log.info("firstName: {}", firstName);
         log.info("userId: {}", userId);
-
 
         return Jwts.builder()
                 .setSubject(userDetailsCustom.getUsername())
                 .claim("firstname", firstName)
                 .claim("userId", userId)
+                .claim("componentNames", componentNames)
                 .claim("authorities", roles)
                 .claim("roles", roles)
                 .claim("isEnable", userDetailsCustom.isEnabled())
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(jwtConfig.getExpiration())))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
+
                 .compact();
     }
-
     @Override
     public boolean isValidToken(String token) {
         final String username = extractUsername(token);
@@ -141,7 +153,6 @@ public class JwtServiceImpl implements JwtService {
 
         return claims;
     }
-
 
 }
 

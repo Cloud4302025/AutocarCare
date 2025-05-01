@@ -1,5 +1,6 @@
 package com.spring.jwt.dto;
 
+import com.spring.jwt.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,19 @@ public class EmployeeDTO {
     private String email;
     private String username;
     private Integer userId;
+    private String password;
+    private String role;
     private List<String> componentNames;
+
+    public User toEntity() {
+        User user = new User();
+        user.setEmail(this.email);
+        user.setPassword(this.password);
+        user.setAddress(this.address);
+
+        user.setFirstName(this.name);
+        user.setLastName(null);
+        return user;
+    }
 }
 

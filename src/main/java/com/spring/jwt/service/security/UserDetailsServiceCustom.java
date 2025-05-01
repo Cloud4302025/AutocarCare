@@ -43,22 +43,9 @@ public class UserDetailsServiceCustom implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
-        String firstName = null;
-        Integer userId=null;
-
-
-        if (authorities.contains(new SimpleGrantedAuthority("USER"))) {
-            User users = userRepository.findByEmail(username);
-            if (users != null) {
-                firstName = user.getFirstName();
-                userId = user.getId();
-            }
-        } else if (authorities.contains(new SimpleGrantedAuthority("ADMIN"))) {
-            if (user!= null) {
-                firstName = user.getFirstName();
-                userId = user.getId();
-            }
-        }
+        // ── **UNCONDITIONAL** extraction of ID & name ──
+        String firstName = user.getFirstName();
+        Integer userId   = user.getId();
 
         return new UserDetailsCustom(
                 user.getEmail(),

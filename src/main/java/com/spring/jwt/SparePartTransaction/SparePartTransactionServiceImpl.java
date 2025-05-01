@@ -6,6 +6,8 @@ import com.spring.jwt.UserParts.UserPart;
 import com.spring.jwt.UserParts.UserPartRepository;
 import com.spring.jwt.VehicleReg.VehicleRegRepository;
 import com.spring.jwt.entity.VehicleReg;
+import com.spring.jwt.entity.VendorPart;
+import com.spring.jwt.repository.VendorPartRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
 
     @Autowired
     private VehicleRegRepository vehicleRegRepository;
+    @Autowired
+    private VendorPartRepository vendorPartRepository;
 
     @Override
     @Transactional
@@ -40,7 +44,6 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
                 transactionDto.getTransactionType() != TransactionType.DEBIT) {
             throw new IllegalArgumentException("Invalid transaction type! Allowed values: CREDIT or DEBIT.");
         }
-
         Integer userId = transactionDto.getUserId();
 
         if (transactionDto.getTransactionType() == TransactionType.DEBIT) {
@@ -53,7 +56,6 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
                 throw new IllegalArgumentException("Either userId or vehicleRegId must be provided for DEBIT transactions.");
             }
         }
-
         SparePart sparePart = sparePartRepository.findByPartNumberAndManufacturer(
                         transactionDto.getPartNumber(), transactionDto.getManufacturer())
                 .orElseThrow(() -> new IllegalArgumentException("Spare part not found with Part Number: " + transactionDto.getPartNumber()));
@@ -69,6 +71,25 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
                     newUserPart.setQuantity(0);
                     return userPartRepository.save(newUserPart);
                 });
+
+        // Check if VendorPart exists for CREDIT transaction
+        if (transactionDto.getTransactionType() == TransactionType.CREDIT) {
+            Optional<VendorPart> existingVendorPart = vendorPartRepository.findByVendorAndPartNumber(
+                    transactionDto.getName(), transactionDto.getPartNumber());
+
+            if (!existingVendorPart.isPresent()) {
+                // If VendorPart doesn't exist, create a new one using information from SparePart
+                VendorPart newVendorPart = new VendorPart();
+                newVendorPart.setVendor(transactionDto.getName());
+                newVendorPart.setVendorId(transactionDto.getVendorId());
+                newVendorPart.setPartNumber(sparePart.getPartNumber());
+                newVendorPart.setPartName(sparePart.getPartName());
+                newVendorPart.setDescription(sparePart.getDescription());
+                newVendorPart.setManufacturer(sparePart.getManufacturer());
+
+                vendorPartRepository.save(newVendorPart);
+            }
+        }
 
         if (transactionDto.getTransactionType() == TransactionType.CREDIT &&
                 (transactionDto.getBillNo() == null || transactionDto.getBillNo().trim().isEmpty())) {
@@ -88,6 +109,7 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
             userPart.setQuantity(userPart.getQuantity() + transactionDto.getQuantity());
         }
         userPartRepository.save(userPart);
+
         int cgstValue = sparePart.getCGST() != null ? sparePart.getCGST() : 0;
         int sgstValue = sparePart.getSGST() != null ? sparePart.getSGST() : 0;
 
@@ -132,6 +154,7 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
         transaction = transactionRepository.save(transaction);
         return toDto(transaction);
     }
+
 
     @Override
     public SparePartTransactionDto getTransactionById(Integer transactionId) {

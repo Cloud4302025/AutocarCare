@@ -37,7 +37,6 @@ public class CustomerDTO {
     @Schema(description = "Role of the customer", example = "USER")
     private String role;
 
-    // Convert Entity -> DTO
     public CustomerDTO(User user) {
         this.email = user.getEmail();
         this.address = user.getAddress();
@@ -47,16 +46,14 @@ public class CustomerDTO {
         this.gstin = user.getGSTINNo();
     }
 
-    // Convert DTO -> Entity
     public User toEntity() {
         User user = new User();
         user.setEmail(this.email);
-        user.setPassword(this.password); // Assuming password is handled here
+        user.setPassword(this.password);
         user.setAddress(this.address);
 
-        // Save full name in firstName only
         user.setFirstName(this.name);
-        user.setLastName(null); // explicitly set to null if needed
+        user.setLastName(null);
 
         if (this.mobile != null && !this.mobile.isBlank()) {
             user.setMobileNumber(Long.parseLong(this.mobile));

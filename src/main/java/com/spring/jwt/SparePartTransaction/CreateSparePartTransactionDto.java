@@ -20,4 +20,5 @@ public class CreateSparePartTransactionDto {
     private Integer sGST;
     private String customerName;
     private String name;
+    private Integer vendorId;
 }

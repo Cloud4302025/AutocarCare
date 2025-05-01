@@ -14,8 +14,8 @@ public class EmployeeMapper {
                 .contact(employee.getContact())
                 .address(employee.getAddress())
                 .email(employee.getEmail())
+                .password(employee.getPassword())
                 .username(employee.getUsername())
-                .userId(employee.getUserId())
                 .componentNames(employee.getComponentNames())
                 .build();
     }
@@ -29,8 +29,8 @@ public class EmployeeMapper {
                 .contact(dto.getContact())
                 .address(dto.getAddress())
                 .email(dto.getEmail())
+                .password(dto.getPassword())
                 .username(dto.getUsername())
-                .userId(dto.getUserId())
                 .componentNames(dto.getComponentNames())
                 .build();
     }

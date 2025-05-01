@@ -294,11 +294,66 @@ public class VehicleRegServiceImpl implements VehicleRegService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<VehicleRegDto> getBySuperwiserAndWorkerAndTechnician(String startDate, String endDate, String technician, String superwiser, String worker) {
+        try {
+            // Initialize a DateTimeFormatter to parse date range
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate start = startDate != null && !startDate.isEmpty() ? LocalDate.parse(startDate, formatter) : null;
+            LocalDate end = endDate != null && !endDate.isEmpty() ? LocalDate.parse(endDate, formatter) : null;
+
+            // Filter vehicle registrations by date range, if provided
+            List<VehicleReg> vehicleRegs = vehicleRegRepository.findAll();
+
+            if (start != null && end != null) {
+                vehicleRegs = vehicleRegs.stream()
+                        .filter(vehicleReg -> !vehicleReg.getDate().isBefore(start) && !vehicleReg.getDate().isAfter(end))
+                        .collect(Collectors.toList());
+            }
+
+            // Further filter by technician, superwiser, or worker if those are provided
+            if (technician != null && !technician.isEmpty()) {
+                vehicleRegs = vehicleRegs.stream()
+                        .filter(vehicleReg -> technician.equalsIgnoreCase(vehicleReg.getTechnician()))
+                        .collect(Collectors.toList());
+            }
+
+            if (superwiser != null && !superwiser.isEmpty()) {
+                vehicleRegs = vehicleRegs.stream()
+                        .filter(vehicleReg -> superwiser.equalsIgnoreCase(vehicleReg.getSuperwiser()))
+                        .collect(Collectors.toList());
+            }
+
+            if (worker != null && !worker.isEmpty()) {
+                vehicleRegs = vehicleRegs.stream()
+                        .filter(vehicleReg -> worker.equalsIgnoreCase(vehicleReg.getWorker()))
+                        .collect(Collectors.toList());
+            }
+
+            // If no records are found, throw an exception
+            if (vehicleRegs.isEmpty()) {
+                throw new RuntimeException("No vehicle registrations found matching the criteria.");
+            }
+
+            // Return the list of filtered VehicleRegDto objects
+            return vehicleRegs.stream()
+                    .map(VehicleRegDto::new)
+                    .collect(Collectors.toList());
+
+        } catch (DateTimeParseException e) {
+            throw new RuntimeException("Invalid date format. Use 'yyyy-MM-dd'.");
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while fetching vehicle registrations: " + e.getMessage());
+        }
+    }
+
+
     public List<VehicleRegDto> getActiveInsurances() {
         return vehicleRegRepository.findByInsuredToGreaterThanEqual(LocalDate.now())
                 .stream()
                 .map(VehicleRegDto::new)
                 .collect(Collectors.toList());
     }
+
 
 }

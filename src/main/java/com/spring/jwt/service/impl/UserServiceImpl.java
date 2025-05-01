@@ -96,6 +96,7 @@ public class UserServiceImpl implements UserService {
             return new ResponseDto(HttpStatus.OK.toString(), "Email sent");
         }
 
+
     public void updateResetPassword(String token, String email) {
         User user = userRepository.findByEmail(email);
         if (user == null) throw new UserNotFoundExceptions("User not found");

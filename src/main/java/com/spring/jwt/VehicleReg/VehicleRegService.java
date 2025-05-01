@@ -30,4 +30,7 @@ public interface VehicleRegService {
     List<VehicleRegDto> getActiveInsurances();
 
     List<VehicleRegDto> getExpiredInsurances();
+
+
+    List<VehicleRegDto> getBySuperwiserAndWorkerAndTechnician(String startDate, String endDate,String technician,String superwiser,String worker);
 }

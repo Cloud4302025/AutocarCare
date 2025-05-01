@@ -133,4 +133,22 @@ public class VehicleRegController {
         return vehicleRegService.getActiveInsurances();
     }
 
+    @GetMapping("/getBySuperwiserAndWorkerAndTechnician")
+    public ResponseDto<List<VehicleRegDto>> getVehicleRegsByRolesAndDateRange(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String technician,
+            @RequestParam(required = false) String superwiser,
+            @RequestParam(required = false) String worker) {
+        try {
+            List<VehicleRegDto> vehicleRegs = vehicleRegService.getBySuperwiserAndWorkerAndTechnician(startDate, endDate, technician, superwiser, worker);
+
+            return ResponseDto.success("Vehicle registrations retrieved successfully", vehicleRegs);
+        } catch (RuntimeException e) {
+            return ResponseDto.error("Error fetching vehicle registrations", e.getMessage());
+        } catch (Exception e) {
+            return ResponseDto.error("Unexpected error occurred", e.getMessage());
+        }
+    }
+
 }

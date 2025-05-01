@@ -9,7 +9,6 @@ import com.spring.jwt.jwt.JwtService;
 import com.spring.jwt.service.security.UserDetailsServiceCustom;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,10 +46,6 @@ public class AppConfig {
     @Lazy
     private JwtService jwtService;
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
 
     @Bean
     public JwtConfig jwtConfig() {
@@ -120,6 +115,7 @@ public class AppConfig {
                 .requestMatchers("/api/quotations/**").permitAll()
                 .requestMatchers("/api/vehicleJobCards/**").permitAll()
                 .requestMatchers("/pdf/**").permitAll()
+                .requestMatchers("/api/borrows/**").permitAll()
                 .requestMatchers("/api/invoices/**").permitAll()
                 .requestMatchers("/vendor/**").permitAll()
                 .requestMatchers("/api/quotations/**").permitAll()
@@ -128,7 +124,12 @@ public class AppConfig {
                 .requestMatchers("/api/employees/**").permitAll()
                 .requestMatchers("/serviceUsed/**").permitAll()
                 .requestMatchers("/api/v1/customer/**").permitAll()
+                .requestMatchers("/api/deposits/**").permitAll()
                 .requestMatchers("/api/vehicle-invoices/**").permitAll()
+                .requestMatchers("/manageNotes/**").permitAll()
+                .requestMatchers("/manageTerms/**").permitAll()
+                .requestMatchers("/api/employees/**").permitAll()
+                .requestMatchers("/vendorParts/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .authenticationManager(manager)

@@ -31,10 +31,13 @@ public class Employee {
 
     private String email;
 
+    private  String password;
+
     private String username;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "employee_component_names", joinColumns = @JoinColumn(name = "employee_id"))
