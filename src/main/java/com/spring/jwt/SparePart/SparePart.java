@@ -20,7 +20,8 @@ import java.util.List;
 public class SparePart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sparePart_seq")
+    @SequenceGenerator(name = "sparePart_seq", sequenceName = "sparePart_seq", allocationSize = 1, initialValue = 10000)
     @Column(name = "sparePartId")
     private Integer sparePartId;
 
@@ -45,7 +46,7 @@ public class SparePart {
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "spare_part_photos",
-            joinColumns = @JoinColumn(name = "spare_part_id", nullable = false)
+            joinColumns = @JoinColumn(name = "spare_part_id", referencedColumnName = "sparePartId", nullable = false)
     )
     @Column(name = "photo", columnDefinition = "LONGBLOB")
     @BatchSize(size = 10)
