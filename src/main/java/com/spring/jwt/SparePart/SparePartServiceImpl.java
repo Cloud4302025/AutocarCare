@@ -40,9 +40,27 @@ public class SparePartServiceImpl implements SparePartService {
 
     @Override
     public BaseResponseDTO addPart(String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos,Integer sGST,Integer cGST,Integer totalGST,Integer buyingPrice) {
-        Optional<SparePart> existingPart = sparePartRepo.findByPartNumberAndManufacturer(partNumber, manufacturer);
+        // Check if part exists with case-insensitive comparison
+        String cleanPartNumber = partNumber.trim();
+        String cleanManufacturer = manufacturer.trim();
+
+        // Log what we're checking to help diagnose the issue
+        logger.info("Checking for duplicate part. Part Number: '{}', Manufacturer: '{}'", cleanPartNumber, cleanManufacturer);
+
+        // First check with exact match
+        Optional<SparePart> existingPart = sparePartRepo.findByPartNumberAndManufacturer(cleanPartNumber, cleanManufacturer);
+
         if (existingPart.isPresent()) {
-            throw new BadRequestException("Part with part number " + partNumber + " already exists for manufacturer " + manufacturer);
+            logger.warn("Part with part number {} already exists for manufacturer {}", cleanPartNumber, cleanManufacturer);
+            throw new BadRequestException("Part with part number " + cleanPartNumber + " already exists for manufacturer " + cleanManufacturer);
+        }
+
+        // Additional check with case-insensitive query (better performance than loading all parts)
+        Optional<SparePart> existingPartIgnoreCase = sparePartRepo.findByPartNumberAndManufacturerIgnoreCase(cleanPartNumber, cleanManufacturer);
+
+        if (existingPartIgnoreCase.isPresent()) {
+            logger.warn("Part with part number {} already exists for manufacturer {} (case-insensitive match)", cleanPartNumber, cleanManufacturer);
+            throw new BadRequestException("Part with part number " + cleanPartNumber + " already exists for manufacturer " + cleanManufacturer + " (ignoring case)");
         }
 
         try {
@@ -59,9 +77,9 @@ public class SparePartServiceImpl implements SparePartService {
             SparePart sparePart = SparePart.builder()
                     .partName(partName)
                     .description(description)
-                    .manufacturer(manufacturer)
+                    .manufacturer(cleanManufacturer)
                     .price(price)
-                    .partNumber(partNumber)
+                    .partNumber(cleanPartNumber)
                     .photo(compressedPhotos)
                     .updateAt(LocalDate.now())
                     .sGST(sGST)
@@ -76,9 +94,9 @@ public class SparePartServiceImpl implements SparePartService {
             UserPart userPart = UserPart.builder()
                     .partName(partName)
                     .description(description)
-                    .manufacturer(manufacturer)
+                    .manufacturer(cleanManufacturer)
                     .price(price)
-                    .partNumber(partNumber)
+                    .partNumber(cleanPartNumber)
                     .updateAt(LocalDate.now())
                     .quantity(0)
                     .sparePart(sparePart)
@@ -95,13 +113,12 @@ public class SparePartServiceImpl implements SparePartService {
 
         } catch (DataIntegrityViolationException e) {
             logger.error("Duplicate part number error: ", e);
-            throw new BadRequestException("Part number " + partNumber + " already exists.");
+            throw new BadRequestException("Part number " + cleanPartNumber + " already exists.");
         } catch (RuntimeException e) {
             logger.error("Error processing images: ", e);
             throw new BadRequestException("Failed to process images");
         }
     }
-
 
     @Override
     public SparePartDto getSparePartById(Integer id) {
