@@ -21,7 +21,7 @@ public class SparePart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sparePart_seq")
-    @SequenceGenerator(name = "sparePart_seq", sequenceName = "sparePart_seq", allocationSize = 1, initialValue = 10000)
+    @SequenceGenerator(name = "sparePart_seq", sequenceName = "sparePart_seq", allocationSize = 1, initialValue = 21000)
     @Column(name = "sparePartId")
     private Integer sparePartId;
 

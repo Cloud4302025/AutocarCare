@@ -27,6 +27,12 @@ public interface SparePartRepo extends JpaRepository<SparePart, Integer>, JpaSpe
 
     Optional<SparePart> findByPartNumberAndManufacturer(String partNumber, String manufacturer);
 
+    @Query("SELECT COUNT(s) > 0 FROM SparePart s WHERE s.partNumber = :partNumber")
+    boolean existsByPartNumber(@Param("partNumber") String partNumber);
+
+    @Query("SELECT MAX(s.sparePartId) FROM SparePart s")
+    Integer findMaxId();
+
     Page<SparePartProjection> findAllProjectedBy(Pageable pageable);
 
 }
