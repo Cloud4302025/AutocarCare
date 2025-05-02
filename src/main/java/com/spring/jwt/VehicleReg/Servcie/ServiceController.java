@@ -1,5 +1,6 @@
 package com.spring.jwt.VehicleReg.Servcie;
 
+import com.spring.jwt.Appointment.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class ServiceController {
 
     @PatchMapping("update/{id}")
     public ResponseEntity<ADDService> updateServicePartial(@PathVariable Integer id,
-                                                        @RequestBody Map<String, Object> updates) {
+                                                           @RequestBody Map<String, Object> updates) {
         ADDService updatedService = serviceService.updateServicePartial(id, updates);
         return ResponseEntity.ok(updatedService);
     }
@@ -46,5 +47,11 @@ public class ServiceController {
     public ResponseEntity<List<ADDService>> searchServices(@RequestParam String serviceName) {
         List<ADDService> services = serviceService.searchByServiceName(serviceName);
         return ResponseEntity.ok(services);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Map<String, String>> deleteService(@PathVariable Integer id) {
+        serviceService.deleteService(id);
+        return ResponseEntity.ok(Map.of("message", "Service with ID " + id + " deleted successfully"));
     }
 }

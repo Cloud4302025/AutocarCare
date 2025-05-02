@@ -5,6 +5,7 @@ import com.spring.jwt.SparePartTransaction.SparePartTransactionDto;
 import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
 import java.util.List;
 
 @RequestMapping("/sparePartManagement")
@@ -45,8 +47,23 @@ public class SparePartController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size) {
         try {
+            long startRequestTime = System.currentTimeMillis();
             PaginatedResponse<SparePartDto> response = sparePartService.getAllSpareParts(page, size);
-            return ResponseEntity.ok(response);
+            long requestDuration = System.currentTimeMillis() - startRequestTime;
+
+            // Generate an ETag based on data content to enable browser caching
+            String etag = String.format("W/\"%d-%d-%d\"", page, size, response.hashCode());
+
+            // Set aggressive caching headers for maximum performance
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.maxAge(Duration.ofSeconds(30))
+                            .mustRevalidate()
+                            .cachePublic())
+                    .eTag(etag)
+                    .header("X-Response-Time-Ms", String.valueOf(requestDuration))
+                    .header("X-Total-Count", String.valueOf(response.getTotalElements()))
+                    .header("Access-Control-Expose-Headers", "X-Total-Count, X-Response-Time-Ms")
+                    .body(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to retrieve spare parts: " + e.getMessage());
         }
@@ -65,7 +82,7 @@ public class SparePartController {
             @RequestParam("cGST") Integer cGST,
             @RequestParam("totalGST") Integer totalGST,
             @RequestParam("buyingPrice") Integer buyingPrice)
-             {
+    {
 
         BaseResponseDTO response = sparePartService.addPart(
                 partName, description, manufacturer, price, partNumber, photos, sGST, cGST, totalGST, buyingPrice);

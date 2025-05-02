@@ -1,6 +1,7 @@
 package com.spring.jwt.VehicleReg.Servcie;
 
 
+import com.spring.jwt.entity.VehicleReg;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,5 +49,12 @@ public class ServiceService {
 
     public List<ADDService> searchByServiceName(String serviceName) {
         return serviceRepository.findByServiceName(serviceName);
+    }
+
+    @Transactional
+    public void deleteService(Integer id) {
+        ADDService service = serviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found with id " + id));
+        serviceRepository.deleteById(id);
     }
 }
