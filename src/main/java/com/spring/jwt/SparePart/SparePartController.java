@@ -45,24 +45,36 @@ public class SparePartController {
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllSpareParts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "30") int size) {
+            @RequestParam(defaultValue = "30") int size,
+            @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
         try {
             long startRequestTime = System.currentTimeMillis();
+            
+            // Create a cache key based on the request parameters
+            String cacheKey = String.format("spareParts_page%d_size%d", page, size);
+            String etag = String.format("W/\"%s\"", cacheKey.hashCode());
+            
+            // Check if the client already has the latest data using ETag
+            if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            
+            // Fetch data
             PaginatedResponse<SparePartDto> response = sparePartService.getAllSpareParts(page, size);
             long requestDuration = System.currentTimeMillis() - startRequestTime;
 
-            // Generate an ETag based on data content to enable browser caching
-            String etag = String.format("W/\"%d-%d-%d\"", page, size, response.hashCode());
-
             // Set aggressive caching headers for maximum performance
             return ResponseEntity.ok()
-                    .cacheControl(CacheControl.maxAge(Duration.ofSeconds(30))
+                    .cacheControl(CacheControl.maxAge(Duration.ofSeconds(60))
                             .mustRevalidate()
                             .cachePublic())
                     .eTag(etag)
                     .header("X-Response-Time-Ms", String.valueOf(requestDuration))
                     .header("X-Total-Count", String.valueOf(response.getTotalElements()))
-                    .header("Access-Control-Expose-Headers", "X-Total-Count, X-Response-Time-Ms")
+                    .header("X-Compression", "enabled")
+                    .header("Access-Control-Expose-Headers", "X-Total-Count, X-Response-Time-Ms, X-Compression")
                     .body(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to retrieve spare parts: " + e.getMessage());
