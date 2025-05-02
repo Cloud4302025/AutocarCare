@@ -2,8 +2,13 @@ package com.spring.jwt.FilterController;
 
 import com.spring.jwt.SparePart.*;
 import com.spring.jwt.exception.PageNotFoundException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +22,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FilterServiceImpl implements FilterService {
+
+    private static final Logger logger = LoggerFactory.getLogger(FilterServiceImpl.class);
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public final SparePartRepo filterRepository;
 
@@ -59,40 +69,93 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     public List<SpareFilterDto> searchSpareParts(String keyword, int limit) {
-        String[] tokens = keyword.trim().toLowerCase().split("\\s+");
+        long startTime = System.currentTimeMillis();
+        logger.info("Starting search for keyword: {}", keyword);
 
-        Specification<SparePart> spec = (root, query, cb) -> {
-            List<Predicate> tokenPredicates = new ArrayList<>();
-            for (String token : tokens) {
-                String pattern = "%" + token + "%";
-                Predicate tokenPredicate = cb.or(
-                        cb.like(cb.lower(root.get("partName")), pattern),
-                        cb.like(cb.lower(root.get("description")), pattern),
-                        cb.like(cb.lower(root.get("manufacturer")), pattern),
-                        cb.like(cb.lower(cb.function("concat", String.class, cb.literal(""), root.get("partNumber"))), pattern)
-                );
-                tokenPredicates.add(tokenPredicate);
+        try {
+            // First try to use the Hibernate API which is safer
+            // This avoids SQL syntax issues with column names
+            Specification<SparePart> spec = (root, query, cb) -> {
+                List<Predicate> tokenPredicates = new ArrayList<>();
+                String[] tokens = keyword.trim().toLowerCase().split("\\s+");
+
+                for (String token : tokens) {
+                    String pattern = "%" + token + "%";
+                    Predicate tokenPredicate = cb.or(
+                            cb.like(cb.lower(root.get("partName")), pattern),
+                            cb.like(cb.lower(root.get("description")), pattern),
+                            cb.like(cb.lower(root.get("manufacturer")), pattern),
+                            cb.like(cb.lower(root.get("partNumber")), pattern)
+                    );
+                    tokenPredicates.add(tokenPredicate);
+                }
+                return cb.and(tokenPredicates.toArray(new Predicate[0]));
+            };
+
+            Pageable pageable = PageRequest.of(0, limit);
+            Page<SparePart> pageResult = filterRepository.findAll(spec, pageable);
+
+            // Log the actual entity data to diagnose the issue
+            if (!pageResult.isEmpty()) {
+                SparePart firstPart = pageResult.getContent().get(0);
+                logger.info("First part found: id={}, name={}, price={}, class={}",
+                        firstPart.getSparePartId(),
+                        firstPart.getPartName(),
+                        firstPart.getPrice(),
+                        firstPart.getPrice() != null ? firstPart.getPrice().getClass().getName() : "null");
             }
-            return cb.and(tokenPredicates.toArray(new Predicate[0]));
-        };
 
-        Pageable pageable = PageRequest.of(0, limit);
-        Page<SparePart> pageResult = filterRepository.findAll(spec, pageable);
+            List<SpareFilterDto> dtoList = pageResult.getContent().stream()
+                    .map(sparePart -> {
+                        // Create DTO with proper price value
+                        SpareFilterDto dto = new SpareFilterDto();
+                        dto.setSparePartId(sparePart.getSparePartId());
+                        dto.setPartName(sparePart.getPartName());
+                        dto.setDescription(sparePart.getDescription());
+                        dto.setManufacturer(sparePart.getManufacturer());
 
-        return pageResult.getContent().stream()
-                .map(sparePart -> SpareFilterDto.builder()
-                        .sparePartId(sparePart.getSparePartId())
-                        .partName(sparePart.getPartName())
-                        .description(sparePart.getDescription())
-                        .manufacturer(sparePart.getManufacturer())
-                        .price(sparePart.getPrice())
-                        .partNumber(sparePart.getPartNumber())
-                        .cGST(sparePart.getCGST())
-                        .sGST(sparePart.getSGST())
-                        .totalGST(sparePart.getTotalGST())
-                        .buyingPrice(sparePart.getBuyingPrice())
-                        .build())
-                .collect(Collectors.toList());
+                        // Make sure price is properly set - handle nulls and use direct access
+                        Long priceValue = sparePart.getPrice();
+                        logger.debug("Raw price value for part {}: {}", sparePart.getPartName(), priceValue);
+
+                        if (priceValue == null) {
+                            // Default to zero if null
+                            dto.setPrice(0L);
+                        } else {
+                            // Ensure the Long value is correctly set
+                            dto.setPrice(priceValue);
+                        }
+
+                        dto.setPartNumber(sparePart.getPartNumber());
+                        dto.setCGST(sparePart.getCGST());
+                        dto.setSGST(sparePart.getSGST());
+                        dto.setTotalGST(sparePart.getTotalGST());
+                        dto.setBuyingPrice(sparePart.getBuyingPrice());
+
+                        // Log the values to help diagnose issues
+                        logger.debug("Mapped price: {} for part {}", dto.getPrice(), dto.getPartName());
+
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+
+            // Log the first DTO to confirm the price is set correctly
+            if (!dtoList.isEmpty()) {
+                SpareFilterDto firstDto = dtoList.get(0);
+                logger.info("First DTO: id={}, name={}, price={}",
+                        firstDto.getSparePartId(),
+                        firstDto.getPartName(),
+                        firstDto.getPrice());
+            }
+
+            long endTime = System.currentTimeMillis();
+            logger.info("Search completed in {} ms, found {} results", (endTime - startTime), dtoList.size());
+
+            return dtoList;
+        } catch (Exception e) {
+            logger.error("Error in search: {}", e.getMessage(), e);
+            // Return empty list rather than throwing exception
+            return new ArrayList<>();
+        }
     }
-
 }

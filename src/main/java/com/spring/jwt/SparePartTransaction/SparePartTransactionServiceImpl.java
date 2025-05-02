@@ -110,25 +110,43 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
         }
         userPartRepository.save(userPart);
 
-        int cgstValue = sparePart.getCGST() != null ? sparePart.getCGST() : 0;
-        int sgstValue = sparePart.getSGST() != null ? sparePart.getSGST() : 0;
+        // Fix for price and GST calculation
+        // Use the provided price from the DTO instead of the sparePart price
+        long basePrice = transactionDto.getPrice() != null ? transactionDto.getPrice() : sparePart.getPrice();
 
-        double cgstAmount;
-        double sgstAmount;
-        double totalGST;
-        double finalPrice;
+        // Use the provided GST values from DTO or fallback to sparePart values
+        int cgstValue = (transactionDto.getCgst() != null) ? transactionDto.getCgst() :
+                (sparePart.getCGST() != null ? sparePart.getCGST() : 0);
 
-        if (transactionDto.getTransactionType() == TransactionType.CREDIT) {
-            cgstAmount = (sparePart.getPrice() * cgstValue) / 100.0;
-            sgstAmount = (sparePart.getPrice() * sgstValue) / 100.0;
-            totalGST = cgstAmount + sgstAmount;
-            finalPrice = sparePart.getPrice() + totalGST;
+        int sgstValue = (transactionDto.getSgst() != null) ? transactionDto.getSgst() :
+                (sparePart.getSGST() != null ? sparePart.getSGST() : 0);
+
+        // Calculate total GST from provided totalsgst or from CGST + SGST
+        int totalGSTValue;
+        if (transactionDto.getTotalsgst() != null) {
+            totalGSTValue = transactionDto.getTotalsgst();
+            // If totalGST is provided but CGST/SGST are not, split them equally
+            if (transactionDto.getCgst() == null || transactionDto.getSgst() == null) {
+                cgstValue = totalGSTValue / 2;
+                sgstValue = totalGSTValue / 2;
+            }
         } else {
-            cgstAmount = 0.0;
-            sgstAmount = 0.0;
-            totalGST = 0.0;
-            finalPrice = sparePart.getPrice();
+            totalGSTValue = cgstValue + sgstValue;
         }
+
+        // Calculate final price based on transaction type
+        long finalPrice;
+        if (transactionDto.getTransactionType() == TransactionType.CREDIT) {
+            // For CREDIT transactions, price should be just the base price (without GST)
+            finalPrice = basePrice;
+        } else {
+            // For DEBIT transactions, calculate price including GST
+            double gstAmount = (basePrice * totalGSTValue) / 100.0;
+            finalPrice = basePrice + Math.round(gstAmount);
+        }
+
+        // Calculate qty_price
+        long qtyPrice = finalPrice * transactionDto.getQuantity();
 
         SparePartTransaction transaction = SparePartTransaction.builder()
                 .partNumber(sparePart.getPartNumber())
@@ -136,11 +154,11 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
                 .partName(sparePart.getPartName())
                 .manufacturer(sparePart.getManufacturer())
                 .customerName(transactionDto.getCustomerName())
-                .price((long) finalPrice)
-                .qtyPrice((long) (finalPrice * transactionDto.getQuantity()))
-                .totalGST((int) totalGST)
-                .cGST(sparePart.getCGST())
-                .sGST(sparePart.getSGST())
+                .price(finalPrice)
+                .qtyPrice(qtyPrice)
+                .totalGST(totalGSTValue)
+                .cGST(cgstValue)
+                .sGST(sgstValue)
                 .updateAt(LocalDate.from(LocalDateTime.now()))
                 .transactionType(transactionDto.getTransactionType())
                 .quantity(transactionDto.getQuantity())

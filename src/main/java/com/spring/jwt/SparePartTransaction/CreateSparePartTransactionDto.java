@@ -16,9 +16,15 @@ public class CreateSparePartTransactionDto {
     private Integer userId;
     private String billNo;
     private Integer vehicleRegId;
-    private Integer cGST;
-    private Integer sGST;
     private String customerName;
     private String name;
     private Integer vendorId;
+
+    // Added/updated fields with consistent naming
+    private Long price;
+    private Long qty_price;
+    private String description;
+    private Integer cgst;
+    private Integer sgst;
+    private Integer totalsgst;
 }

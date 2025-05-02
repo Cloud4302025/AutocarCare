@@ -4,7 +4,31 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cd7e60a2-7d57-4d6a-a833-5dc280398d56" name="Changes" comment="" />
+    <list default="true" id="cd7e60a2-7d57-4d6a-a833-5dc280398d56" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/db/performance_indexes.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/FilterController/FilterServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/FilterController/FilterServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/UserParts/UserPartRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/UserParts/UserPartRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/Servcie/ServiceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/Servcie/ServiceController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/Servcie/ServiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/Servcie/ServiceService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-dev.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-prod.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-prod.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application-dev.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application-prod.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application-prod.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/FilterController/FilterServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/FilterController/FilterServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePart/SparePartServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePart/SparePartServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto$CreateSparePartTransactionDtoBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto$CreateSparePartTransactionDtoBuilder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/CreateSparePartTransactionDto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/UserParts/UserPartRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/UserParts/UserPartRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/VehicleReg/Servcie/ServiceController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/VehicleReg/Servcie/ServiceController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/VehicleReg/Servcie/ServiceService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/VehicleReg/Servcie/ServiceService.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -49,16 +73,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.JwtWithSpringSecurityApplication.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Ash&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.JwtWithSpringSecurityApplication.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Ash",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="JwtWithSpringSecurityApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.spring.jwt.JwtWithSpringSecurityApplication" />

@@ -40,7 +40,7 @@ public class SparePartServiceImpl implements SparePartService {
 
     @Override
     @Transactional
-    public BaseResponseDTO addPart(String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos,Integer sGST,Integer cGST,Integer totalGST,Integer buyingPrice) {
+    public BaseResponseDTO addPart(String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos, Integer sGST, Integer cGST, Integer totalGST, Integer buyingPrice) {
         // Clean input data
         String cleanPartNumber = partNumber.trim();
         String cleanManufacturer = manufacturer.trim();
@@ -259,7 +259,7 @@ public class SparePartServiceImpl implements SparePartService {
 
 
     @Override
-    public SparePartDto updatePart(Integer id, String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos,Integer sGST,Integer cGST,Integer totalGST,Integer buyingPrice,String vendor) {
+    public SparePartDto updatePart(Integer id, String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos, Integer sGST, Integer cGST, Integer totalGST, Integer buyingPrice, String vendor) {
         SparePart sparePart = sparePartRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Spare part not found"));
 
@@ -316,6 +316,7 @@ public class SparePartServiceImpl implements SparePartService {
 
         return sparePartMapper.toDto(updatedPart);
     }
+
     @Transactional
     @Override
     public BaseResponseDTO deleteSparePartById(Integer id, Integer photoIndex) {
