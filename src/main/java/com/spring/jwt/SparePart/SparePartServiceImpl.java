@@ -17,6 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -196,6 +199,7 @@ public class SparePartServiceImpl implements SparePartService {
     }
 
     @Override
+    @Cacheable(value = "sparePartById", key = "#id")
     public SparePartDto getSparePartById(Integer id) {
         Optional<SparePart> sparePartOptional = sparePartRepo.findById(id);
 
@@ -220,45 +224,52 @@ public class SparePartServiceImpl implements SparePartService {
     }
 
     @Override
+    @Cacheable(value = "spareParts", key = "'page_' + #page + '_size_' + #size")
     public PaginatedResponse<SparePartDto> getAllSpareParts(int page, int size) {
-        Sort sort = Sort.by("sparePartId").descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        Page<SparePartProjection> sparePartsPage = sparePartRepo.findAllProjectedBy(pageable);
-
-        if (sparePartsPage.isEmpty()) {
+        Pageable pageable = PageRequest.of(page, size);
+        
+        // Use entity graph to efficiently fetch entities with photos
+        Page<SparePart> spareParts = sparePartRepo.findAllByOrderBySparePartIdDesc(pageable);
+        
+        if (spareParts.isEmpty()) {
             throw new RuntimeException("No data found");
         }
-
-        List<SparePartDto> sparePartsDtoList = sparePartsPage
-                .map(projection -> {
+        
+        // Convert entities to DTOs with photos
+        List<SparePartDto> sparePartsDtoList = spareParts.getContent().stream()
+                .map(sparePart -> {
                     List<String> base64Photos = null;
-                    if (projection.getPhoto() != null) {
-                        base64Photos = projection.getPhoto().stream()
-                                .map(bytes -> Base64.getEncoder().encodeToString(bytes))
-                                .collect(Collectors.toList());
+                    
+                    // Get only the first photo to reduce response size
+                    if (sparePart.getPhoto() != null && !sparePart.getPhoto().isEmpty()) {
+                        byte[] firstPhoto = sparePart.getPhoto().get(0);
+                        if (firstPhoto != null && firstPhoto.length > 0) {
+                            base64Photos = List.of(Base64.getEncoder().encodeToString(firstPhoto));
+                        }
                     }
+                    
                     return SparePartDto.builder()
-                            .sparePartId(projection.getSparePartId())
-                            .partName(projection.getPartName())
-                            .manufacturer(projection.getManufacturer())
-                            .price(projection.getPrice())
-                            .partNumber(projection.getPartNumber())
+                            .sparePartId(sparePart.getSparePartId())
+                            .partName(sparePart.getPartName())
+                            .manufacturer(sparePart.getManufacturer())
+                            .price(sparePart.getPrice())
+                            .partNumber(sparePart.getPartNumber())
                             .photo(base64Photos)
                             .build();
                 })
-                .getContent();
-
+                .collect(Collectors.toList());
+                
         return new PaginatedResponse<>(
                 sparePartsDtoList,
-                sparePartsPage.getTotalPages(),
-                sparePartsPage.getTotalElements(),
-                page
+                spareParts.getTotalPages(),
+                spareParts.getTotalElements(),
+                spareParts.getNumber()
         );
     }
 
-
     @Override
+    @CachePut(value = "sparePartById", key = "#id")
+    @CacheEvict(value = "spareParts", allEntries = true)
     public SparePartDto updatePart(Integer id, String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos, Integer sGST, Integer cGST, Integer totalGST, Integer buyingPrice, String vendor) {
         SparePart sparePart = sparePartRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Spare part not found"));
@@ -319,6 +330,7 @@ public class SparePartServiceImpl implements SparePartService {
 
     @Transactional
     @Override
+    @CacheEvict(value = {"spareParts", "sparePartById"}, allEntries = true)
     public BaseResponseDTO deleteSparePartById(Integer id, Integer photoIndex) {
         return sparePartRepo.findById(id)
                 .map(sparePart -> {

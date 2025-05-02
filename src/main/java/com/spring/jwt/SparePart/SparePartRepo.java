@@ -16,7 +16,7 @@ public interface SparePartRepo extends JpaRepository<SparePart, Integer>, JpaSpe
     Optional<Object> findByPartNumber(String partNumber);
 
     @EntityGraph(attributePaths = {"photo"})
-    Page<SparePart> findAll(Pageable pageable);
+    Page<SparePart> findAllByOrderBySparePartIdDesc(Pageable pageable);
 
     @Query("SELECT s FROM SparePart s " +
             "WHERE LOWER(s.partName) LIKE CONCAT('%', LOWER(:keyword), '%') " +
@@ -33,7 +33,16 @@ public interface SparePartRepo extends JpaRepository<SparePart, Integer>, JpaSpe
     @Query("SELECT MAX(s.sparePartId) FROM SparePart s")
     Integer findMaxId();
 
+    @Query("SELECT s.sparePartId as sparePartId, " +
+           "s.partName as partName, " +
+           "s.manufacturer as manufacturer, " +
+           "s.price as price, " +
+           "s.partNumber as partNumber " +
+           "FROM SparePart s " +
+           "ORDER BY s.sparePartId DESC")
     Page<SparePartProjection> findAllProjectedBy(Pageable pageable);
-
+    
+    @Query("SELECT p FROM SparePart s JOIN s.photo p WHERE s.sparePartId = :id ORDER BY p LIMIT 1")
+    Optional<byte[]> findFirstPhotoById(@Param("id") Integer id);
 }
 
