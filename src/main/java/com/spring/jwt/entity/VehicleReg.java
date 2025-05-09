@@ -44,7 +44,8 @@ public class VehicleReg {
     @Column
     private Integer kmsDriven;
 
-    // FuelType
+    private String fuelType;
+
     @Column(length = 45)
     private String vehicleVariant;
 

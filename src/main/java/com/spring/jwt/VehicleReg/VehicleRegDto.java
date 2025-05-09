@@ -17,6 +17,7 @@ public class VehicleRegDto {
     private String vehicleVariant;
     private String engineNumber;
     private String chasisNumber;
+    private String fuelType;
     private String numberPlateColour;
     private Integer kmsDriven;
 
@@ -57,6 +58,7 @@ public class VehicleRegDto {
         this.vehicleInspection = vehicleReg.getVehicleInspection();
         this.vehicleRegId = vehicleReg.getVehicleRegId();
         this.appointmentId = vehicleReg.getAppointmentId();
+        this.fuelType = vehicleReg.getFuelType();
         this.vehicleNumber = vehicleReg.getVehicleNumber();
         this.vehicleBrand = vehicleReg.getVehicleBrand();
         this.vehicleModelName = vehicleReg.getVehicleModelName();
