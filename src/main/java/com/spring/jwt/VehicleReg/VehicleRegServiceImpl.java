@@ -106,6 +106,9 @@ public class VehicleRegServiceImpl implements VehicleRegService {
         if (vehicleRegDto.getVehicleVariant() != null) {
             vehicleReg.setVehicleVariant(vehicleRegDto.getVehicleVariant());
         }
+        if (vehicleRegDto.getFuelType() != null) {
+            vehicleReg.setFuelType(vehicleRegDto.getFuelType());
+        }
         if (vehicleRegDto.getEngineNumber() != null) {
             vehicleReg.setEngineNumber(vehicleRegDto.getEngineNumber());
         }
@@ -236,6 +239,7 @@ public class VehicleRegServiceImpl implements VehicleRegService {
         vehicleReg.setVehicleBrand(vehicleRegDto.getVehicleBrand());
         vehicleReg.setVehicleModelName(vehicleRegDto.getVehicleModelName());
         vehicleReg.setVehicleVariant(vehicleRegDto.getVehicleVariant());
+        vehicleReg.setFuelType(vehicleRegDto.getFuelType());
         vehicleReg.setEngineNumber(vehicleRegDto.getEngineNumber());
         vehicleReg.setChasisNumber(vehicleRegDto.getChasisNumber());
         vehicleReg.setNumberPlateColour(vehicleRegDto.getNumberPlateColour());

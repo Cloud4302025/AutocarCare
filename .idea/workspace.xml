@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="cd7e60a2-7d57-4d6a-a833-5dc280398d56" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/JobCard/JobCardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/JobCard/JobCardServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/CacheConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/CacheConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/VehicleRegDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/VehicleRegDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/VehicleRegServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/VehicleReg/VehicleRegServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/VehicleReg.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/VehicleReg.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-dev.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application-dev.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
