@@ -20,7 +20,10 @@ public class CacheConfig {
                 // VehicleReg caches
                 "vehicleStatusCache",
                 // Filter search cache
-                "searchBarFilterCache"
+                "searchBarFilterCache",
+                // JobCard caches
+                "jobCards",
+                "jobCardById"
         ));
         return cacheManager;
     }
