@@ -1,11 +1,18 @@
 package com.spring.jwt.FilterController;
 
 import com.spring.jwt.SparePart.SpareFilterDto;
+import com.spring.jwt.SparePart.SparePartDto;
+import com.spring.jwt.SparePart.SparePartRepo;
 import com.spring.jwt.exception.PageNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.util.List;
@@ -33,7 +40,7 @@ public class FilterController {
                         .eTag(etag)
                         .build();
             }
-            List<SpareFilterDto> sparePartDtos = filterService.searchBarFilter(searchBarInput);
+            List<SparePartDto> sparePartDtos = filterService.searchBarFilter(searchBarInput);
             long requestDuration = System.currentTimeMillis() - startRequestTime;
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.maxAge(Duration.ofSeconds(60)).mustRevalidate().cachePublic())

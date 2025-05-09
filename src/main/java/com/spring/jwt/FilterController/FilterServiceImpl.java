@@ -35,7 +35,7 @@ public class FilterServiceImpl implements FilterService {
 
     @Override
     @Cacheable(value = "searchBarFilterCache", key = "#searchBarInput.toLowerCase()")
-    public List<SpareFilterDto> searchBarFilter(String searchBarInput) {
+    public List<SparePartDto> searchBarFilter(String searchBarInput) {
         String[] tokens = searchBarInput.toLowerCase().trim().split("\\s+");
         Pageable pageable = PageRequest.of(0, 20); // Limit to 20 results
 
@@ -59,18 +59,7 @@ public class FilterServiceImpl implements FilterService {
             throw new PageNotFoundException("No spare parts found for the given search keyword.");
         }
         return spareParts.getContent().stream()
-                .map(sparePart -> SpareFilterDto.builder()
-                        .sparePartId(sparePart.getSparePartId())
-                        .partName(sparePart.getPartName())
-                        .description(sparePart.getDescription())
-                        .manufacturer(sparePart.getManufacturer())
-                        .price(sparePart.getPrice())
-                        .partNumber(sparePart.getPartNumber())
-                        .cGST(sparePart.getCGST())
-                        .sGST(sparePart.getSGST())
-                        .totalGST(sparePart.getTotalGST())
-                        .buyingPrice(sparePart.getBuyingPrice())
-                        .build())
+                .map(sparePartMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -111,14 +100,12 @@ public class FilterServiceImpl implements FilterService {
 
             List<SpareFilterDto> dtoList = pageResult.getContent().stream()
                     .map(sparePart -> {
-                        // Create DTO with proper price value
                         SpareFilterDto dto = new SpareFilterDto();
                         dto.setSparePartId(sparePart.getSparePartId());
                         dto.setPartName(sparePart.getPartName());
                         dto.setDescription(sparePart.getDescription());
                         dto.setManufacturer(sparePart.getManufacturer());
 
-                        // Make sure price is properly set - handle nulls and use direct access
                         Long priceValue = sparePart.getPrice();
                         logger.debug("Raw price value for part {}: {}", sparePart.getPartName(), priceValue);
 
