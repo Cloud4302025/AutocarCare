@@ -1,17 +1,13 @@
 package com.spring.jwt.FilterController;
 
 import com.spring.jwt.SparePart.SpareFilterDto;
-import com.spring.jwt.SparePart.SparePartDto;
-import com.spring.jwt.SparePart.SparePartRepo;
 import com.spring.jwt.exception.PageNotFoundException;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -25,19 +21,30 @@ public class FilterController {
     }
 
     @GetMapping("/searchBarFilter")
-    public ResponseEntity<SparePartAllDto> searchBarFilter(@RequestParam String searchBarInput) {
+    public ResponseEntity<?> searchBarFilter(
+            @RequestParam String searchBarInput,
+            @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
         try {
-            List<SparePartDto> sparePartDtos = filterService.searchBarFilter(searchBarInput);
-
-            SparePartAllDto responseDto = new SparePartAllDto("success");
-            responseDto.setList(sparePartDtos);
-
-            return ResponseEntity.ok(responseDto);
+            long startRequestTime = System.currentTimeMillis();
+            String cacheKey = searchBarInput.toLowerCase();
+            String etag = String.format("W/\"%s\"", cacheKey.hashCode());
+            if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            List<SpareFilterDto> sparePartDtos = filterService.searchBarFilter(searchBarInput);
+            long requestDuration = System.currentTimeMillis() - startRequestTime;
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.maxAge(Duration.ofSeconds(60)).mustRevalidate().cachePublic())
+                    .eTag(etag)
+                    .header("X-Response-Time-Ms", String.valueOf(requestDuration))
+                    .header("X-Total-Count", String.valueOf(sparePartDtos.size()))
+                    .header("X-Compression", "enabled")
+                    .header("Access-Control-Expose-Headers", "X-Total-Count, X-Response-Time-Ms, X-Compression")
+                    .body(sparePartDtos);
         } catch (PageNotFoundException ex) {
-            SparePartAllDto responseDto = new SparePartAllDto("unsuccess");
-            responseDto.setException(ex.getMessage());
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseDto);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
 

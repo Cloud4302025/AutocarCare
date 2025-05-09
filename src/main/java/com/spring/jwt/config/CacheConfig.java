@@ -13,7 +13,15 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
-        cacheManager.setCacheNames(java.util.Arrays.asList("spareParts", "sparePartById"));
+        cacheManager.setCacheNames(java.util.Arrays.asList(
+                // SparePart caches
+                "spareParts",
+                "sparePartById",
+                // VehicleReg caches
+                "vehicleStatusCache",
+                // Filter search cache
+                "searchBarFilterCache"
+        ));
         return cacheManager;
     }
 } 
