@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,37 +34,43 @@ public class FilterServiceImpl implements FilterService {
     public final SparePartMapper sparePartMapper;
 
     @Override
-    public List<SparePartDto> searchBarFilter(String searchBarInput) {
-
+    @Cacheable(value = "searchBarFilterCache", key = "#searchBarInput.toLowerCase()")
+    public List<SpareFilterDto> searchBarFilter(String searchBarInput) {
         String[] tokens = searchBarInput.toLowerCase().trim().split("\\s+");
+        Pageable pageable = PageRequest.of(0, 20); // Limit to 20 results
 
-        List<SparePart> spareParts = filterRepository.findAll((root, query, cb) -> {
-            root.fetch("photo", JoinType.LEFT);
-            query.distinct(true);
-
+        Specification<SparePart> spec = (root, query, cb) -> {
             List<Predicate> tokenPredicates = new ArrayList<>();
-
             for (String token : tokens) {
                 String pattern = "%" + token + "%";
-
                 Predicate orForThisToken = cb.or(
                         cb.like(cb.lower(root.get("partName")), pattern),
                         cb.like(cb.lower(root.get("description")), pattern),
                         cb.like(cb.lower(root.get("manufacturer")), pattern),
-                        cb.like(cb.function("concat", String.class, cb.literal(""), root.get("partNumber")) , pattern)
+                        cb.like(cb.function("concat", String.class, cb.literal(""), root.get("partNumber")), pattern)
                 );
-
                 tokenPredicates.add(orForThisToken);
             }
-
             return cb.and(tokenPredicates.toArray(new Predicate[0]));
-        });
+        };
 
+        Page<SparePart> spareParts = filterRepository.findAll(spec, pageable);
         if (spareParts.isEmpty()) {
             throw new PageNotFoundException("No spare parts found for the given search keyword.");
         }
-        return spareParts.stream()
-                .map(sparePartMapper::toDto)
+        return spareParts.getContent().stream()
+                .map(sparePart -> SpareFilterDto.builder()
+                        .sparePartId(sparePart.getSparePartId())
+                        .partName(sparePart.getPartName())
+                        .description(sparePart.getDescription())
+                        .manufacturer(sparePart.getManufacturer())
+                        .price(sparePart.getPrice())
+                        .partNumber(sparePart.getPartNumber())
+                        .cGST(sparePart.getCGST())
+                        .sGST(sparePart.getSGST())
+                        .totalGST(sparePart.getTotalGST())
+                        .buyingPrice(sparePart.getBuyingPrice())
+                        .build())
                 .collect(Collectors.toList());
     }
 
@@ -73,8 +80,6 @@ public class FilterServiceImpl implements FilterService {
         logger.info("Starting search for keyword: {}", keyword);
 
         try {
-            // First try to use the Hibernate API which is safer
-            // This avoids SQL syntax issues with column names
             Specification<SparePart> spec = (root, query, cb) -> {
                 List<Predicate> tokenPredicates = new ArrayList<>();
                 String[] tokens = keyword.trim().toLowerCase().split("\\s+");
@@ -95,7 +100,6 @@ public class FilterServiceImpl implements FilterService {
             Pageable pageable = PageRequest.of(0, limit);
             Page<SparePart> pageResult = filterRepository.findAll(spec, pageable);
 
-            // Log the actual entity data to diagnose the issue
             if (!pageResult.isEmpty()) {
                 SparePart firstPart = pageResult.getContent().get(0);
                 logger.info("First part found: id={}, name={}, price={}, class={}",
@@ -119,10 +123,8 @@ public class FilterServiceImpl implements FilterService {
                         logger.debug("Raw price value for part {}: {}", sparePart.getPartName(), priceValue);
 
                         if (priceValue == null) {
-                            // Default to zero if null
                             dto.setPrice(0L);
                         } else {
-                            // Ensure the Long value is correctly set
                             dto.setPrice(priceValue);
                         }
 
@@ -132,14 +134,12 @@ public class FilterServiceImpl implements FilterService {
                         dto.setTotalGST(sparePart.getTotalGST());
                         dto.setBuyingPrice(sparePart.getBuyingPrice());
 
-                        // Log the values to help diagnose issues
                         logger.debug("Mapped price: {} for part {}", dto.getPrice(), dto.getPartName());
 
                         return dto;
                     })
                     .collect(Collectors.toList());
 
-            // Log the first DTO to confirm the price is set correctly
             if (!dtoList.isEmpty()) {
                 SpareFilterDto firstDto = dtoList.get(0);
                 logger.info("First DTO: id={}, name={}, price={}",
@@ -154,7 +154,6 @@ public class FilterServiceImpl implements FilterService {
             return dtoList;
         } catch (Exception e) {
             logger.error("Error in search: {}", e.getMessage(), e);
-            // Return empty list rather than throwing exception
             return new ArrayList<>();
         }
     }

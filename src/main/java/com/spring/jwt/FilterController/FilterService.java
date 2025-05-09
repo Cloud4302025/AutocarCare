@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 
 public interface FilterService {
-    List<SparePartDto> searchBarFilter(String searchBarInput);
+    List<SpareFilterDto> searchBarFilter(String searchBarInput);
 
     public List<SpareFilterDto> searchSpareParts(String keyword, int limit);
 }
