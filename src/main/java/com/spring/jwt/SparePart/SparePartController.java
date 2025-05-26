@@ -1,13 +1,10 @@
 package com.spring.jwt.SparePart;
 
-import com.spring.jwt.SparePartTransaction.CreateSparePartTransactionDto;
-import com.spring.jwt.SparePartTransaction.SparePartTransactionDto;
+
 import com.spring.jwt.utils.BaseResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -93,11 +90,12 @@ public class SparePartController {
             @RequestParam("sGST") Integer sGST,
             @RequestParam("cGST") Integer cGST,
             @RequestParam("totalGST") Integer totalGST,
+            @RequestParam("quantity") Integer quantity,
             @RequestParam("buyingPrice") Integer buyingPrice)
     {
 
         BaseResponseDTO response = sparePartService.addPart(
-                partName, description, manufacturer, price, partNumber, photos, sGST, cGST, totalGST, buyingPrice);
+                partName, description, manufacturer, price, partNumber, photos, sGST, cGST, totalGST, buyingPrice,quantity);
 
         return ResponseEntity.ok(response);
     }

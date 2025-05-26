@@ -46,6 +46,7 @@ public class UserDTO {
 
     private String gSTINNo;
 
+    private Integer userId;
     @Schema(
             description = "Role of the User", example = "USER"
     )
@@ -55,6 +56,7 @@ public class UserDTO {
         this.email = user.getEmail();
         this.Address = user.getAddress();
         this.firstName = user.getFirstName();
+        this.userId = user.getId();
         this.lastName = user.getLastName();
         this.mobileNumber = user.getMobileNumber();
         this.adharNo = user.getAdharNo();

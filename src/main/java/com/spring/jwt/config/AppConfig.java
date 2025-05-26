@@ -130,6 +130,7 @@ public class AppConfig {
                 .requestMatchers("/manageTerms/**").permitAll()
                 .requestMatchers("/api/employees/**").permitAll()
                 .requestMatchers("/vendorParts/**").permitAll()
+                .requestMatchers("/bills/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .authenticationManager(manager)

@@ -43,7 +43,7 @@ public class SparePartServiceImpl implements SparePartService {
 
     @Override
     @Transactional
-    public BaseResponseDTO addPart(String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos, Integer sGST, Integer cGST, Integer totalGST, Integer buyingPrice) {
+    public BaseResponseDTO addPart(String partName, String description, String manufacturer, Long price, String partNumber, List<MultipartFile> photos, Integer sGST, Integer cGST, Integer totalGST, Integer buyingPrice, Integer quantity) {
         // Clean input data
         String cleanPartNumber = partNumber.trim();
         String cleanManufacturer = manufacturer.trim();
@@ -169,6 +169,7 @@ public class SparePartServiceImpl implements SparePartService {
                     .lastUpdate(LocalDate.now().toString())
                     .sGST(sGST)
                     .cGST(cGST)
+                    .quantity(quantity)
                     .buyingPrice(buyingPrice)
                     .totalGST(totalGST)
                     .build();
