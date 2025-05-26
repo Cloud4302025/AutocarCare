@@ -23,7 +23,9 @@ public class CacheConfig {
                 "searchBarFilterCache",
                 // JobCard caches
                 "jobCards",
-                "jobCardById"
+                "jobCardById",
+                // Bill caches
+                "billsCache"
         ));
         return cacheManager;
     }
