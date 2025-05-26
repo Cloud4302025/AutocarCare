@@ -3,10 +3,25 @@ package com.spring.jwt.SparePartTransaction;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface SparePartTransactionService {
 
     SparePartTransactionDto createTransaction(CreateSparePartTransactionDto transactionDto);
+
+    /**
+     * Process multiple transactions efficiently in a batch
+     * @param transactionDtos List of transaction DTOs to process
+     * @return List of created transaction DTOs
+     */
+    List<SparePartTransactionDto> createBatchTransactions(List<CreateSparePartTransactionDto> transactionDtos);
+
+    /**
+     * Preload all necessary data for batch processing
+     * @param transactions List of transaction DTOs to process
+     * @return Map containing preloaded data (spare parts, user parts, etc.)
+     */
+    Map<String, Object> preloadDataForBatch(List<CreateSparePartTransactionDto> transactions);
 
     SparePartTransactionDto getTransactionById(Integer transactionId);
 
@@ -33,4 +48,4 @@ public interface SparePartTransactionService {
 
     public List<SparePartTransactionDto> getCreditTransactionsByDateRange ( TransactionType transactionType, LocalDateTime startDate, LocalDateTime endDate);
 
-   }
+}
