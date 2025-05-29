@@ -52,5 +52,15 @@ public class UserPartController {
             return ResponseEntity.badRequest().body("Update failed: " + e.getMessage());
         }
     }
+    
+    @DeleteMapping("/delete/{userPartId}")
+    public ResponseEntity<?> deleteUserPart(@PathVariable Integer userPartId) {
+        try {
+            userPartService.deleteUserPartAndSparePart(userPartId);
+            return ResponseEntity.ok("User part and associated spare part deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Delete failed: " + e.getMessage());
+        }
+    }
 }
 

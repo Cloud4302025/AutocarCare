@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -111,5 +112,18 @@ public class UserPartServiceImpl implements UserPartService {
         return userPartMapper.toDto(updatedUserPart);
     }
 
-
+    @Override
+    @Transactional
+    public void deleteUserPartAndSparePart(Integer userPartId) {
+        UserPart userPart = userPartRepository.findById(userPartId)
+                .orElseThrow(() -> new RuntimeException("UserPart not found with id " + userPartId));
+        
+        Integer sparePartId = userPart.getSparePart().getSparePartId();
+        
+        // Delete UserPart first (child)
+        userPartRepository.delete(userPart);
+        
+        // Then delete SparePart (parent)
+        sparePartRepo.deleteById(sparePartId);
+    }
 }

@@ -12,4 +12,6 @@ public interface UserPartService {
     Integer getQuantityByPartNumber(String partNumber);
 
     UserPartDto updateUserPartAndSparePart(UpdateUserPartRequestDTO request);
+    
+    void deleteUserPartAndSparePart(Integer userPartId);
 }
