@@ -11,4 +11,7 @@ public interface FilterService {
     List<SparePartDto> searchBarFilter(String searchBarInput);
 
     public List<SpareFilterDto> searchSpareParts(String keyword, int limit);
+
+    List<String> getAllManufacturers();
+
 }

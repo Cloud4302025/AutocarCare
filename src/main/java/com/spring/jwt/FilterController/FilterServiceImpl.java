@@ -144,4 +144,9 @@ public class FilterServiceImpl implements FilterService {
             return new ArrayList<>();
         }
     }
+
+    @Override
+    public List<String> getAllManufacturers() {
+        return filterRepository.findDistinctManufacturers();
+    }
 }
