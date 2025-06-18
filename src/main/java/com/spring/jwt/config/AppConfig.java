@@ -110,6 +110,7 @@ public class AppConfig {
                 .requestMatchers("/sparePartManagement/**").permitAll()
                 .requestMatchers("/sparePartTransactions/**").permitAll()
                 .requestMatchers("/save-part/**").permitAll()
+                .requestMatchers("/discounts/**").permitAll()
                 .requestMatchers("/Filter/**").permitAll()
                 .requestMatchers("/userParts/**").permitAll()
                 .requestMatchers("/api/quotations/**").permitAll()

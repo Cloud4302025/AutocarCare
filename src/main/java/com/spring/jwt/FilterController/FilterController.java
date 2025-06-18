@@ -2,17 +2,11 @@ package com.spring.jwt.FilterController;
 
 import com.spring.jwt.SparePart.SpareFilterDto;
 import com.spring.jwt.SparePart.SparePartDto;
-import com.spring.jwt.SparePart.SparePartRepo;
 import com.spring.jwt.exception.PageNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.List;
@@ -59,4 +53,11 @@ public class FilterController {
     public List<SpareFilterDto> searchSpareParts(@RequestParam String keyword) {
         return filterService.searchSpareParts(keyword, 40);
     }
+
+    @GetMapping("/manufacturers")
+    public ResponseEntity<List<String>> getManufacturers() {
+        List<String> manufacturers = filterService.getAllManufacturers();
+        return ResponseEntity.ok(manufacturers);
+    }
+
 }

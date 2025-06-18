@@ -46,23 +46,19 @@ public class SparePartController {
             @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
         try {
             long startRequestTime = System.currentTimeMillis();
-            
-            // Create a cache key based on the request parameters
+
             String cacheKey = String.format("spareParts_page%d_size%d", page, size);
             String etag = String.format("W/\"%s\"", cacheKey.hashCode());
-            
-            // Check if the client already has the latest data using ETag
+
             if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
                 return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
                         .eTag(etag)
                         .build();
             }
-            
-            // Fetch data
+
             PaginatedResponse<SparePartDto> response = sparePartService.getAllSpareParts(page, size);
             long requestDuration = System.currentTimeMillis() - startRequestTime;
 
-            // Set aggressive caching headers for maximum performance
             return ResponseEntity.ok()
                     .cacheControl(CacheControl.maxAge(Duration.ofSeconds(60))
                             .mustRevalidate()

@@ -32,7 +32,6 @@ public class SparePartTransactionController {
     private final SparePartTransactionRepository transactionRepository;
     private final JdbcTemplate jdbcTemplate;
 
-    // Create a thread pool for parallel processing with more threads
     private final ExecutorService executorService = Executors.newFixedThreadPool(
             Math.max(Runtime.getRuntime().availableProcessors() * 2, 8)
     );

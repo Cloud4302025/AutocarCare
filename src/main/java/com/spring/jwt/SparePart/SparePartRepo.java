@@ -44,5 +44,9 @@ public interface SparePartRepo extends JpaRepository<SparePart, Integer>, JpaSpe
     
     @Query("SELECT p FROM SparePart s JOIN s.photo p WHERE s.sparePartId = :id ORDER BY p LIMIT 1")
     Optional<byte[]> findFirstPhotoById(@Param("id") Integer id);
+
+    @Query("SELECT DISTINCT s.manufacturer FROM SparePart s WHERE s.manufacturer IS NOT NULL")
+    List<String> findDistinctManufacturers();
+
 }
 
