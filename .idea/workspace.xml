@@ -5,27 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cd7e60a2-7d57-4d6a-a833-5dc280398d56" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/DiscountStructureController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/DiscountStructureDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/DiscountStructure.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/repository/DiscountStructureRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/service/DiscountService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/DiscountServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jpa-buddy.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jpa-buddy.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/ItemWiseTransactionDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/PartBasicInfoDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/FilterController/FilterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/FilterController/FilterController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/FilterController/FilterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/FilterController/FilterService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/FilterController/FilterServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/FilterController/FilterServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePart/SparePartServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/filter/JwtTokenAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/filter/JwtTokenAuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-dev.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application-dev.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/filter/JwtTokenAuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/filter/JwtTokenAuthenticationFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/VendorPartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/VendorPartController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/VendorPartServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/VendorPartServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/utils/ImageCompressionUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/utils/ImageCompressionUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/vender/VendorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/vender/VendorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePart/SparePartController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePart/SparePartController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/BulkTransactionRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/BulkTransactionRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SparePartTransactionServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/utils/ImageCompressionUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/utils/ImageCompressionUtil.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,17 +71,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.JwtWithSpringSecurityApplication.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Ash2&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/admin/Desktop&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Application.JwtWithSpringSecurityApplication.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Ash2",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/admin/Desktop"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="JwtWithSpringSecurityApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.spring.jwt.JwtWithSpringSecurityApplication" />
@@ -125,5 +126,8 @@
       <updated>1744700027685</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
   </component>
 </project>

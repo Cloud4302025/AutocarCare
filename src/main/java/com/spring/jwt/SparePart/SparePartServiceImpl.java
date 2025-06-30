@@ -361,5 +361,6 @@ public class SparePartServiceImpl implements SparePartService {
                 })
                 .orElseThrow(() -> new SparePartNotFoundException("Not found with ID: " + id));
     }
+    
 
 }

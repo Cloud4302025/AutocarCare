@@ -130,6 +130,9 @@ public class VendorPartController {
             @RequestParam String manufacturer
     ) {
         try {
+            // Add debug logging
+            System.out.println("DEBUG: Request parameters - partNumber: " + partNumber + ", manufacturer: " + manufacturer);
+            
             // Service signature is (partNumber, manufacturer)
             List<VendorDto> vendors = vendorPartService
                     .getVendorsByPartNumberAndManufacturer(partNumber, manufacturer);

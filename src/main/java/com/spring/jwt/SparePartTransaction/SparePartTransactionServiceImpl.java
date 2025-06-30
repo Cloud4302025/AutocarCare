@@ -23,6 +23,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 @Service
 public class SparePartTransactionServiceImpl implements SparePartTransactionService {
@@ -908,4 +910,237 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
                 .build();
     }
 
+    /**
+     * Item-wise: full transaction objects ordered by partName.
+     */
+    public List<SparePartTransaction> getTransactionsBetweenDates1(
+            LocalDateTime fromDate, LocalDateTime toDate, String sortBy) {
+
+        if (fromDate == null || toDate == null) {
+            throw new IllegalArgumentException("fromDate and toDate must not be null.");
+        }
+        if (fromDate.isAfter(toDate)) {
+            throw new IllegalArgumentException("fromDate must be before toDate.");
+        }
+
+        if ("item".equalsIgnoreCase(sortBy)) {
+            return transactionRepository.findByTransactionDateBetweenOrderByPartNameAsc(fromDate, toDate);
+        } else if ("vendor".equalsIgnoreCase(sortBy)) {
+            // we'll handle vendor in controller via getVendorNamesBetween()
+            throw new IllegalArgumentException("Use the vendor-specific method for vendor sorting.");
+        } else {
+            throw new IllegalArgumentException("Invalid sortBy value. Use 'vendor' or 'item'.");
+        }
+    }
+
+    /**
+     * Vendor-wise: just the sorted, distinct vendor names.
+     */
+    public List<String> getVendorNamesBetween(LocalDateTime fromDate, LocalDateTime toDate) {
+        if (fromDate == null || toDate == null) {
+            throw new IllegalArgumentException("fromDate and toDate must not be null.");
+        }
+        if (fromDate.isAfter(toDate)) {
+            throw new IllegalArgumentException("fromDate must be before toDate.");
+        }
+
+        return transactionRepository
+                .findDistinctNamesByTransactionDateBetweenOrderByNameAsc(fromDate, toDate)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get distinct parts information from transactions for a specific vendor
+     * Implementation focuses on performance by using a Set for deduplication
+     */
+    @Override
+    public List<PartBasicInfoDto> getDistinctPartsByVendorName(String vendorName) {
+        if (vendorName == null || vendorName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Vendor name cannot be null or empty");
+        }
+        
+        // Get all transactions for the vendor
+        List<SparePartTransaction> transactions = transactionRepository.findByName(vendorName.trim());
+        
+        if (transactions.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        // Use a Set with custom comparator to deduplicate based on partNumber and manufacturer
+        Set<PartBasicInfoDto> distinctParts = new TreeSet<>(
+                Comparator.comparing(PartBasicInfoDto::getPartNumber)
+                        .thenComparing(PartBasicInfoDto::getManufacturer));
+        
+        // Extract the needed fields and add to the set
+        for (SparePartTransaction transaction : transactions) {
+            if (transaction.getPartNumber() != null && transaction.getManufacturer() != null) {
+                PartBasicInfoDto partInfo = PartBasicInfoDto.builder()
+                        .partName(transaction.getPartName())
+                        .manufacturer(transaction.getManufacturer())
+                        .partNumber(transaction.getPartNumber())
+                        .build();
+                        
+                distinctParts.add(partInfo);
+            }
+        }
+        
+        // Convert set to list for return
+        return new ArrayList<>(distinctParts);
+    }
+
+    /**
+     * Get item-wise transactions with sale quantity and remaining quantity
+     * This implementation uses efficient SQL queries and batch processing for optimal performance
+     */
+    @Override
+    public List<ItemWiseTransactionDto> getItemWiseTransactionsBetweenDates(LocalDateTime fromDate, LocalDateTime toDate) {
+        if (fromDate == null || toDate == null) {
+            throw new IllegalArgumentException("fromDate and toDate must not be null.");
+        }
+        if (fromDate.isAfter(toDate)) {
+            throw new IllegalArgumentException("fromDate must be before toDate.");
+        }
+
+        // Step 1: Get all transactions in the date range ordered by part name
+        List<SparePartTransaction> transactions = transactionRepository.findByTransactionDateBetweenOrderByPartNameAsc(fromDate, toDate);
+        
+        if (transactions.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Step 2: Group transactions by sparePartId and calculate total sale quantity
+        Map<Integer, Integer> saleQuantityBySparePartId = new HashMap<>();
+        Map<Integer, SparePartTransaction> latestTransactionBySparePartId = new HashMap<>();
+        
+        for (SparePartTransaction transaction : transactions) {
+            Integer sparePartId = transaction.getSparePartId();
+            if (sparePartId != null) {
+                // Sum up quantities for the same spare part
+                saleQuantityBySparePartId.merge(sparePartId, transaction.getQuantity(), Integer::sum);
+                
+                // Keep track of the latest transaction for each spare part to get other details
+                latestTransactionBySparePartId.putIfAbsent(sparePartId, transaction);
+            }
+        }
+
+        // Step 3: Fetch remaining quantities from UserPart table using the repository directly
+        List<ItemWiseTransactionDto> result = new ArrayList<>();
+        
+        for (Map.Entry<Integer, SparePartTransaction> entry : latestTransactionBySparePartId.entrySet()) {
+            Integer sparePartId = entry.getKey();
+            SparePartTransaction transaction = entry.getValue();
+            Integer saleQuantity = saleQuantityBySparePartId.get(sparePartId);
+            
+            // Get remaining quantity using repository
+            Integer remainingQuantity = 0; // Default to 0 if not found
+            
+            try {
+                // Try to get UserPart by sparePartId using findBySparePart_SparePartId method
+                Optional<UserPart> userPartOpt = userPartRepository.findBySparePart_SparePartId(sparePartId);
+                if (userPartOpt.isPresent()) {
+                    remainingQuantity = userPartOpt.get().getQuantity();
+                }
+            } catch (Exception e) {
+                // In case of any error, fallback to default 0
+                System.err.println("Error fetching UserPart for sparePartId " + sparePartId + ": " + e.getMessage());
+            }
+            
+            ItemWiseTransactionDto dto = ItemWiseTransactionDto.builder()
+                    .sparePartId(sparePartId)
+                    .partNumber(transaction.getPartNumber())
+                    .partName(transaction.getPartName())
+                    .manufacturer(transaction.getManufacturer())
+                    .price(transaction.getPrice())
+                    .cGST(transaction.getCGST())
+                    .sGST(transaction.getSGST())
+                    .qtyPrice(transaction.getQtyPrice())
+                    .saleQuantity(saleQuantity)
+                    .remainingQuantity(remainingQuantity)
+                    .build();
+                    
+            result.add(dto);
+        }
+        
+        return result;
+    }
+
+    /**
+     * Get distinct parts with sale quantity and available quantity from transactions for a specific vendor
+     * Implementation uses same approach as getItemWiseTransactionsBetweenDates but filters by vendor name
+     */
+    @Override
+    public List<ItemWiseTransactionDto> getPartsWithQuantitiesByVendorName(String vendorName) {
+        if (vendorName == null || vendorName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Vendor name cannot be null or empty");
+        }
+        
+        // Get all transactions for the vendor
+        List<SparePartTransaction> transactions = transactionRepository.findByName(vendorName.trim());
+        
+        if (transactions.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Group transactions by sparePartId and calculate total sale quantity
+        Map<Integer, Integer> saleQuantityBySparePartId = new HashMap<>();
+        Map<Integer, SparePartTransaction> latestTransactionBySparePartId = new HashMap<>();
+        
+        for (SparePartTransaction transaction : transactions) {
+            Integer sparePartId = transaction.getSparePartId();
+            if (sparePartId != null) {
+                // Sum up quantities for the same spare part
+                saleQuantityBySparePartId.merge(sparePartId, transaction.getQuantity(), Integer::sum);
+                
+                // Keep track of the latest transaction for each spare part to get other details
+                if (!latestTransactionBySparePartId.containsKey(sparePartId) ||
+                    transaction.getTransactionDate().isAfter(
+                        latestTransactionBySparePartId.get(sparePartId).getTransactionDate())) {
+                    latestTransactionBySparePartId.put(sparePartId, transaction);
+                }
+            }
+        }
+
+        // Fetch available quantities from UserPart table
+        List<ItemWiseTransactionDto> result = new ArrayList<>();
+        
+        for (Map.Entry<Integer, SparePartTransaction> entry : latestTransactionBySparePartId.entrySet()) {
+            Integer sparePartId = entry.getKey();
+            SparePartTransaction transaction = entry.getValue();
+            Integer saleQuantity = saleQuantityBySparePartId.get(sparePartId);
+            
+            // Get remaining quantity using repository
+            Integer remainingQuantity = 0; // Default to 0 if not found
+            
+            try {
+                // Try to get UserPart by sparePartId
+                Optional<UserPart> userPartOpt = userPartRepository.findBySparePart_SparePartId(sparePartId);
+                if (userPartOpt.isPresent()) {
+                    remainingQuantity = userPartOpt.get().getQuantity();
+                }
+            } catch (Exception e) {
+                // In case of any error, fallback to default 0
+                System.err.println("Error fetching UserPart for sparePartId " + sparePartId + ": " + e.getMessage());
+            }
+            
+            ItemWiseTransactionDto dto = ItemWiseTransactionDto.builder()
+                    .sparePartId(sparePartId)
+                    .partNumber(transaction.getPartNumber())
+                    .partName(transaction.getPartName())
+                    .manufacturer(transaction.getManufacturer())
+                    .price(transaction.getPrice())
+                    .cGST(transaction.getCGST())
+                    .sGST(transaction.getSGST())
+                    .qtyPrice(transaction.getQtyPrice())
+                    .saleQuantity(saleQuantity)
+                    .remainingQuantity(remainingQuantity)
+                    .build();
+                    
+            result.add(dto);
+        }
+        
+        return result;
+    }
 }
