@@ -77,7 +77,7 @@ public class VendorPartServiceImpl implements VendorPartService {
 
     @Override
     public List<VendorPartDto> getByPartNumber(String partNumber, String manufacturer) {
-        List<VendorPart> parts = vendorPartRepository.findByManufacturerAndPartNumber(partNumber, manufacturer);
+        List<VendorPart> parts = vendorPartRepository.findByManufacturerAndPartNumber(manufacturer, partNumber);
         if (parts.isEmpty()) {
             throw new ResourceNotFoundException("No VendorParts found with part number: " + partNumber);
         }
@@ -119,6 +119,15 @@ public class VendorPartServiceImpl implements VendorPartService {
         // fetch parts by (manufacturer, partNumber)
         List<VendorPart> parts = vendorPartRepository
                 .findByManufacturerAndPartNumber(manufacturer, partNumber);
+                
+        System.out.println("DEBUG: Found " + parts.size() + " vendor parts for manufacturer=" + 
+                           manufacturer + ", partNumber=" + partNumber);
+        
+        if (!parts.isEmpty()) {
+            System.out.println("DEBUG: First part details - vendorId: " + parts.get(0).getVendorId() + 
+                            ", vendor: " + parts.get(0).getVendor() + 
+                            ", partName: " + parts.get(0).getPartName());
+        }
 
         if (parts.isEmpty()) {
             throw new ResourceNotFoundException(
@@ -132,7 +141,14 @@ public class VendorPartServiceImpl implements VendorPartService {
         // extract distinct vendor IDs
         Set<Integer> vendorIds = parts.stream()
                 .map(VendorPart::getVendorId)
+                .filter(id -> id != null)  // Filter out null vendor IDs
                 .collect(Collectors.toSet());
+
+        if (vendorIds.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "No valid vendor IDs found for parts with partNumber=" + partNumber + ", manufacturer=" + manufacturer
+            );
+        }
 
         // load vendor entities in one shot
         List<Vendor> vendors = vendorRepository.findAllById(vendorIds);

@@ -1,6 +1,8 @@
 package com.spring.jwt.SparePartTransaction;
 
 import com.spring.jwt.Appointment.ResponseDto;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -645,6 +647,97 @@ public class SparePartTransactionController {
             return ResponseEntity.badRequest().body(ResponseDto.error("No transactions found for given filters", e.getMessage()));
         }
     }
+
+    @GetMapping("/transactions/filter")
+    public ResponseEntity<?> getTransactionsByDateRangeAndSort(
+            @RequestParam("fromDate")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fromDate,
+
+            @RequestParam("toDate")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime toDate,
+
+            @RequestParam("sortBy") String sortBy) {
+
+        try {
+            if ("vendor".equalsIgnoreCase(sortBy)) {
+                List<String> vendors = transactionService.getVendorNamesBetween(fromDate, toDate);
+                if (vendors.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(Map.of("message", "No vendors found for the given date range."));
+                }
+                return ResponseEntity.ok(vendors);
+            } else if ("item".equalsIgnoreCase(sortBy)) {
+                // Use the new method to get item-wise transactions with sale and remaining quantities
+                List<ItemWiseTransactionDto> items = transactionService.getItemWiseTransactionsBetweenDates(fromDate, toDate);
+                
+                if (items.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(Map.of("message", "No transactions found for the given date range."));
+                }
+                return ResponseEntity.ok(items);
+            } else {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Invalid sortBy value. Use 'vendor' or 'item'."));
+            }
+
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", ex.getMessage()));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Something went wrong", "details", ex.getMessage()));
+        }
+    }
+    
+    /**
+     * Get distinct parts by vendor name without duplications
+     * Returns only basic part information: partName, manufacturer, and partNumber 
+     */
+    @GetMapping("/parts/by-vendor")
+    public ResponseEntity<?> getPartsByVendorName(@RequestParam("vendorName") String vendorName) {
+        try {
+            List<PartBasicInfoDto> parts = transactionService.getDistinctPartsByVendorName(vendorName);
+            
+            if (parts.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "No parts found for vendor: " + vendorName));
+            }
+            
+            return ResponseEntity.ok(parts);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", ex.getMessage()));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Something went wrong", "details", ex.getMessage()));
+        }
+    }
+    
+    /**
+     * Get distinct parts by vendor name with sale quantity and available quantity
+     * Uses ItemWiseTransactionDto which includes sale and remaining quantities
+     */
+    @GetMapping("/parts/by-vendor/with-quantities")
+    public ResponseEntity<?> getPartsWithQuantitiesByVendorName(@RequestParam("vendorName") String vendorName) {
+        try {
+            List<ItemWiseTransactionDto> parts = transactionService.getPartsWithQuantitiesByVendorName(vendorName);
+            
+            if (parts.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "No parts found for vendor: " + vendorName));
+            }
+            
+            return ResponseEntity.ok(parts);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", ex.getMessage()));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Something went wrong", "details", ex.getMessage()));
+        }
+    }
 }
 
 /**
@@ -687,4 +780,5 @@ class BulkTransactionRequest {
     public void setInvoiceDate(String invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
+
 }

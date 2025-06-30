@@ -39,6 +39,27 @@ public interface SparePartTransactionRepository extends JpaRepository<SparePartT
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
 
+
+    List<SparePartTransaction> findByTransactionDateBetweenOrderByNameAsc(
+            LocalDateTime startDate, LocalDateTime endDate);
+
+    List<SparePartTransaction> findByTransactionDateBetweenOrderByPartNameAsc(
+            LocalDateTime startDate, LocalDateTime endDate);
+
+    /**
+     * New: fetch only the distinct vendor names in the date range, sorted.
+     */
+    @Query("""
+        SELECT DISTINCT t.name
+        FROM SparePartTransaction t
+        WHERE t.transactionDate BETWEEN :start AND :end
+        ORDER BY t.name
+        """)
+    List<String> findDistinctNamesByTransactionDateBetweenOrderByNameAsc(
+            @Param("start") LocalDateTime start,
+            @Param("end"  ) LocalDateTime end
+    );
+
 }
 
 

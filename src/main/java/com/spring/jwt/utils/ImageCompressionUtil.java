@@ -69,7 +69,6 @@ public class ImageCompressionUtil {
 
     private static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
         try {
-            // Defensive checks
             if (originalImage == null) {
                 logger.error("Null image passed to resize function");
                 return null;
@@ -80,7 +79,6 @@ public class ImageCompressionUtil {
                 return null;
             }
 
-            // Calculate target dimensions maintaining aspect ratio
             int width = originalImage.getWidth();
             int height = originalImage.getHeight();
             double ratio = (double) width / height;
