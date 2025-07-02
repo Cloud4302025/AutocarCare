@@ -1004,67 +1004,42 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
             throw new IllegalArgumentException("fromDate must be before toDate.");
         }
 
-        // Step 1: Get all transactions in the date range ordered by part name
-        List<SparePartTransaction> transactions = transactionRepository.findByTransactionDateBetweenOrderByPartNameAsc(fromDate, toDate);
+        // Use the optimized native query that performs aggregation in the database
+        List<Object[]> results = transactionRepository.findAggregatedTransactionsByDateRange(fromDate, toDate);
         
-        if (transactions.isEmpty()) {
+        if (results.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // Step 2: Group transactions by sparePartId and calculate total sale quantity
-        Map<Integer, Integer> saleQuantityBySparePartId = new HashMap<>();
-        Map<Integer, SparePartTransaction> latestTransactionBySparePartId = new HashMap<>();
-        
-        for (SparePartTransaction transaction : transactions) {
-            Integer sparePartId = transaction.getSparePartId();
-            if (sparePartId != null) {
-                // Sum up quantities for the same spare part
-                saleQuantityBySparePartId.merge(sparePartId, transaction.getQuantity(), Integer::sum);
-                
-                // Keep track of the latest transaction for each spare part to get other details
-                latestTransactionBySparePartId.putIfAbsent(sparePartId, transaction);
-            }
-        }
+        // Convert query results to DTOs
+        return convertToItemWiseDtos(results);
+    }
 
-        // Step 3: Fetch remaining quantities from UserPart table using the repository directly
-        List<ItemWiseTransactionDto> result = new ArrayList<>();
+    /**
+     * Utility method to convert native query results to ItemWiseTransactionDto objects
+     */
+    private List<ItemWiseTransactionDto> convertToItemWiseDtos(List<Object[]> results) {
+        List<ItemWiseTransactionDto> dtos = new ArrayList<>();
         
-        for (Map.Entry<Integer, SparePartTransaction> entry : latestTransactionBySparePartId.entrySet()) {
-            Integer sparePartId = entry.getKey();
-            SparePartTransaction transaction = entry.getValue();
-            Integer saleQuantity = saleQuantityBySparePartId.get(sparePartId);
-            
-            // Get remaining quantity using repository
-            Integer remainingQuantity = 0; // Default to 0 if not found
-            
-            try {
-                // Try to get UserPart by sparePartId using findBySparePart_SparePartId method
-                Optional<UserPart> userPartOpt = userPartRepository.findBySparePart_SparePartId(sparePartId);
-                if (userPartOpt.isPresent()) {
-                    remainingQuantity = userPartOpt.get().getQuantity();
-                }
-            } catch (Exception e) {
-                // In case of any error, fallback to default 0
-                System.err.println("Error fetching UserPart for sparePartId " + sparePartId + ": " + e.getMessage());
-            }
-            
+        for (Object[] row : results) {
+            // Create DTO from row data (handling potential null values)
             ItemWiseTransactionDto dto = ItemWiseTransactionDto.builder()
-                    .sparePartId(sparePartId)
-                    .partNumber(transaction.getPartNumber())
-                    .partName(transaction.getPartName())
-                    .manufacturer(transaction.getManufacturer())
-                    .price(transaction.getPrice())
-                    .cGST(transaction.getCGST())
-                    .sGST(transaction.getSGST())
-                    .qtyPrice(transaction.getQtyPrice())
-                    .saleQuantity(saleQuantity)
-                    .remainingQuantity(remainingQuantity)
+                    .sparePartId(row[0] != null ? ((Number) row[0]).intValue() : null)
+                    .partNumber((String) row[1])
+                    .partName((String) row[2])
+                    .manufacturer((String) row[3])
+                    .price(row[4] != null ? ((Number) row[4]).longValue() : null)
+                    .cGST(row[5] != null ? ((Number) row[5]).intValue() : null)
+                    .sGST(row[6] != null ? ((Number) row[6]).intValue() : null)
+                    .qtyPrice(row[7] != null ? ((Number) row[7]).longValue() : null)
+                    .saleQuantity(row[8] != null ? ((Number) row[8]).intValue() : 0)
+                    .remainingQuantity(row[9] != null ? ((Number) row[9]).intValue() : 0)
                     .build();
-                    
-            result.add(dto);
+            
+            dtos.add(dto);
         }
         
-        return result;
+        return dtos;
     }
 
     /**
@@ -1077,70 +1052,14 @@ public class SparePartTransactionServiceImpl implements SparePartTransactionServ
             throw new IllegalArgumentException("Vendor name cannot be null or empty");
         }
         
-        // Get all transactions for the vendor
-        List<SparePartTransaction> transactions = transactionRepository.findByName(vendorName.trim());
+        // Use the optimized native query that performs aggregation in the database
+        List<Object[]> results = transactionRepository.findAggregatedTransactionsByVendorName(vendorName.trim());
         
-        if (transactions.isEmpty()) {
+        if (results.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // Group transactions by sparePartId and calculate total sale quantity
-        Map<Integer, Integer> saleQuantityBySparePartId = new HashMap<>();
-        Map<Integer, SparePartTransaction> latestTransactionBySparePartId = new HashMap<>();
-        
-        for (SparePartTransaction transaction : transactions) {
-            Integer sparePartId = transaction.getSparePartId();
-            if (sparePartId != null) {
-                // Sum up quantities for the same spare part
-                saleQuantityBySparePartId.merge(sparePartId, transaction.getQuantity(), Integer::sum);
-                
-                // Keep track of the latest transaction for each spare part to get other details
-                if (!latestTransactionBySparePartId.containsKey(sparePartId) ||
-                    transaction.getTransactionDate().isAfter(
-                        latestTransactionBySparePartId.get(sparePartId).getTransactionDate())) {
-                    latestTransactionBySparePartId.put(sparePartId, transaction);
-                }
-            }
-        }
-
-        // Fetch available quantities from UserPart table
-        List<ItemWiseTransactionDto> result = new ArrayList<>();
-        
-        for (Map.Entry<Integer, SparePartTransaction> entry : latestTransactionBySparePartId.entrySet()) {
-            Integer sparePartId = entry.getKey();
-            SparePartTransaction transaction = entry.getValue();
-            Integer saleQuantity = saleQuantityBySparePartId.get(sparePartId);
-            
-            // Get remaining quantity using repository
-            Integer remainingQuantity = 0; // Default to 0 if not found
-            
-            try {
-                // Try to get UserPart by sparePartId
-                Optional<UserPart> userPartOpt = userPartRepository.findBySparePart_SparePartId(sparePartId);
-                if (userPartOpt.isPresent()) {
-                    remainingQuantity = userPartOpt.get().getQuantity();
-                }
-            } catch (Exception e) {
-                // In case of any error, fallback to default 0
-                System.err.println("Error fetching UserPart for sparePartId " + sparePartId + ": " + e.getMessage());
-            }
-            
-            ItemWiseTransactionDto dto = ItemWiseTransactionDto.builder()
-                    .sparePartId(sparePartId)
-                    .partNumber(transaction.getPartNumber())
-                    .partName(transaction.getPartName())
-                    .manufacturer(transaction.getManufacturer())
-                    .price(transaction.getPrice())
-                    .cGST(transaction.getCGST())
-                    .sGST(transaction.getSGST())
-                    .qtyPrice(transaction.getQtyPrice())
-                    .saleQuantity(saleQuantity)
-                    .remainingQuantity(remainingQuantity)
-                    .build();
-                    
-            result.add(dto);
-        }
-        
-        return result;
+        // Convert query results to DTOs using the same utility method
+        return convertToItemWiseDtos(results);
     }
 }

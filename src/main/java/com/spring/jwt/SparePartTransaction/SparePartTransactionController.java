@@ -671,12 +671,12 @@ public class SparePartTransactionController {
             } else if ("item".equalsIgnoreCase(sortBy)) {
                 // Use the new method to get item-wise transactions with sale and remaining quantities
                 List<ItemWiseTransactionDto> items = transactionService.getItemWiseTransactionsBetweenDates(fromDate, toDate);
-                
-                if (items.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body(Map.of("message", "No transactions found for the given date range."));
-                }
-                return ResponseEntity.ok(items);
+
+            if (items.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "No transactions found for the given date range."));
+            }
+            return ResponseEntity.ok(items);
             } else {
                 return ResponseEntity.badRequest()
                     .body(Map.of("error", "Invalid sortBy value. Use 'vendor' or 'item'."));
