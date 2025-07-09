@@ -2,6 +2,7 @@ package com.spring.jwt.FilterController;
 
 import com.spring.jwt.SparePart.SpareFilterDto;
 import com.spring.jwt.SparePart.SparePartDto;
+import com.spring.jwt.UserParts.UserPartDto;
 import com.spring.jwt.exception.PageNotFoundException;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -60,4 +61,31 @@ public class FilterController {
         return ResponseEntity.ok(manufacturers);
     }
 
+    @GetMapping("/userPartSearchBarFilter")
+    public ResponseEntity<?> searchBarFilterUserPart(
+            @RequestParam String searchBarInput,
+            @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
+        try {
+            long startRequestTime = System.currentTimeMillis();
+            String cacheKey = searchBarInput.toLowerCase();
+            String etag = String.format("W/\"%s\"", cacheKey.hashCode());
+            if (ifNoneMatch != null && ifNoneMatch.equals(etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            List<UserPartDto> sparePartDtos = filterService.searchBarFilterUserPart(searchBarInput);
+            long requestDuration = System.currentTimeMillis() - startRequestTime;
+            return ResponseEntity.ok()
+                    .cacheControl(CacheControl.maxAge(Duration.ofSeconds(60)).mustRevalidate().cachePublic())
+                    .eTag(etag)
+                    .header("X-Response-Time-Ms", String.valueOf(requestDuration))
+                    .header("X-Total-Count", String.valueOf(sparePartDtos.size()))
+                    .header("X-Compression", "enabled")
+                    .header("Access-Control-Expose-Headers", "X-Total-Count, X-Response-Time-Ms, X-Compression")
+                    .body(sparePartDtos);
+        } catch (PageNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+    }
 }

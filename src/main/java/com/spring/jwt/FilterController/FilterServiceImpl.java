@@ -1,6 +1,9 @@
 package com.spring.jwt.FilterController;
 
 import com.spring.jwt.SparePart.*;
+import com.spring.jwt.UserParts.UserPart;
+import com.spring.jwt.UserParts.UserPartDto;
+import com.spring.jwt.UserParts.UserPartRepository;
 import com.spring.jwt.exception.PageNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -31,13 +34,15 @@ public class FilterServiceImpl implements FilterService {
 
     public final SparePartRepo filterRepository;
 
+    public final UserPartRepository userPartRepository;
+
     public final SparePartMapper sparePartMapper;
 
     @Override
     @Cacheable(value = "searchBarFilterCache", key = "#searchBarInput.toLowerCase()")
     public List<SparePartDto> searchBarFilter(String searchBarInput) {
         String[] tokens = searchBarInput.toLowerCase().trim().split("\\s+");
-        Pageable pageable = PageRequest.of(0, 20); // Limit to 20 results
+        Pageable pageable = PageRequest.of(0, 20);
 
         Specification<SparePart> spec = (root, query, cb) -> {
             List<Predicate> tokenPredicates = new ArrayList<>();
@@ -149,4 +154,65 @@ public class FilterServiceImpl implements FilterService {
     public List<String> getAllManufacturers() {
         return filterRepository.findDistinctManufacturers();
     }
+
+    @Override
+    @Cacheable(value = "searchBarFilterCache", key = "#searchBarInput.toLowerCase()")
+    public List<UserPartDto> searchBarFilterUserPart(String searchBarInput) {
+        String[] tokens = searchBarInput.toLowerCase().trim().split("\\s+");
+        Pageable pageable = PageRequest.of(0, 20);
+
+        Specification<UserPart> spec = (root, query, cb) -> {
+            List<Predicate> tokenPredicates = new ArrayList<>();
+            for (String token : tokens) {
+                String pattern = "%" + token + "%";
+                Predicate orForThisToken = cb.or(
+                        cb.like(cb.lower(root.get("partName")), pattern),
+                        cb.like(cb.lower(root.get("description")), pattern),
+                        cb.like(cb.lower(root.get("manufacturer")), pattern),
+                        cb.like(cb.lower(root.get("partNumber")), pattern),
+                        cb.like(cb.function("str", String.class, root.get("quantity")), pattern) // include quantity
+                );
+                tokenPredicates.add(orForThisToken);
+            }
+            return cb.and(tokenPredicates.toArray(new Predicate[0]));
+        };
+
+        Page<UserPart> spareParts = userPartRepository.findAll(spec, pageable);
+        if (spareParts.isEmpty()) {
+            throw new PageNotFoundException("No spare parts found for the given search keyword.");
+        }
+
+        return spareParts.getContent().stream()
+                .map(this::toUserPartDto)
+                .collect(Collectors.toList());
+
+    }
+
+    public UserPartDto toUserPartDto(UserPart userPart) {
+        return UserPartDto.builder()
+                .userPartId(userPart.getUserPartId())
+                .quantity(userPart.getQuantity())
+                .lastUpdate(userPart.getLastUpdate())
+                .partName(userPart.getPartName())
+                .description(userPart.getDescription())
+                .manufacturer(userPart.getManufacturer())
+                .price(userPart.getPrice())
+                .updateAt(userPart.getUpdateAt())
+                .partNumber(userPart.getPartNumber())
+                .vendor(userPart.getVendor())
+                .cGST(userPart.getCGST())
+                .sGST(userPart.getSGST())
+                .totalGST(userPart.getTotalGST())
+                .buyingPrice(userPart.getBuyingPrice())
+                .sparePartId(userPart.getSparePart() != null ? userPart.getSparePart().getSparePartId() : null)
+                .build();
+    }
+
+
 }
+
+
+
+
+
+
