@@ -21,6 +21,7 @@ public class AppointmentController {
         return ResponseEntity.ok(appointments);
     }
 
+    // To get All Appoinments
     @GetMapping("/getById" )
     public ResponseEntity<AppointmentDto> getAppointmentById(@RequestParam Integer id) {
         try {
