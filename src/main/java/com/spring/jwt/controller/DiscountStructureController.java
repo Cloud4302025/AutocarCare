@@ -61,4 +61,34 @@ public class DiscountStructureController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    // Update active set index for a manufacturer
+    @PatchMapping("/active-set/{id}/{index}")
+    public ResponseEntity<?> updateActiveSet(
+            @PathVariable Integer id,
+            @PathVariable Integer index) {
+        try {
+            DiscountStructureDTO dto = new DiscountStructureDTO();
+            dto.setActiveSetIndex(index);
+            DiscountStructureDTO updated = discountService.updateDiscount(id, dto);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Optional: update active set by manufacturer name directly
+    @PatchMapping("/active-set/by-manufacturer/{manufacturer}/{index}")
+    public ResponseEntity<?> updateActiveSetByManufacturer(
+            @PathVariable String manufacturer,
+            @PathVariable Integer index) {
+        return discountService.getByManufacturer(manufacturer)
+                .map(dto -> {
+                    DiscountStructureDTO payload = new DiscountStructureDTO();
+                    payload.setActiveSetIndex(index);
+                    DiscountStructureDTO updated = discountService.updateDiscount(dto.getDiscountId(), payload);
+                    return ResponseEntity.ok(updated);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

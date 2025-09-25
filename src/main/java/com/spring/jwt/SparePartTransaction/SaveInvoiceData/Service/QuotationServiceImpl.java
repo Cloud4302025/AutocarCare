@@ -10,6 +10,8 @@ import com.spring.jwt.SparePartTransaction.SaveInvoiceData.Repository.QuotationR
 import com.spring.jwt.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -158,5 +160,15 @@ public class QuotationServiceImpl implements QuotationService {
         dto.setLabourLines(labourLineDTOs);
 
         return dto;
+    }
+
+    @Override
+    @Transactional
+    public void deleteQuotation(Long quotationId) {
+        Quotation quotation = quotationRepository.findById(quotationId)
+                .orElseThrow(() -> new IllegalArgumentException("No quotation with id " + quotationId));
+
+        quotationRepository.delete(quotation);
+
     }
 }

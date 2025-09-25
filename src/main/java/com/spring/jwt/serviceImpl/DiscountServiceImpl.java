@@ -40,14 +40,19 @@ public class DiscountServiceImpl implements DiscountService {
         DiscountStructure existing = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No discount with id " + id));
 
-        if (!existing.getManufacturer().equals(dto.getManufacturer())
-                && repo.existsByManufacturer(dto.getManufacturer())) {
-            throw new IllegalArgumentException(
-                    "Discount for manufacturer '" + dto.getManufacturer() + "' already exists");
+        // Update manufacturer only if provided, and enforce uniqueness only in that case
+        if (dto.getManufacturer() != null && !dto.getManufacturer().isBlank()) {
+            if (!existing.getManufacturer().equals(dto.getManufacturer())
+                    && repo.existsByManufacturer(dto.getManufacturer())) {
+                throw new IllegalArgumentException(
+                        "Discount for manufacturer '" + dto.getManufacturer() + "' already exists");
+            }
+            existing.setManufacturer(dto.getManufacturer());
         }
-
-        existing.setManufacturer(dto.getManufacturer());
-        existing.setDiscount(dto.getDiscount());
+        if (dto.getDiscountA() != null) existing.setDiscountA(dto.getDiscountA());
+        if (dto.getDiscountB() != null) existing.setDiscountB(dto.getDiscountB());
+        if (dto.getDiscountC() != null) existing.setDiscountC(dto.getDiscountC());
+        if (dto.getActiveSetIndex() != null) existing.setActiveSetIndex(dto.getActiveSetIndex());
         DiscountStructure saved = repo.save(existing);
         return toDto(saved);
     }
@@ -69,7 +74,10 @@ public class DiscountServiceImpl implements DiscountService {
     private DiscountStructure toEntity(DiscountStructureDTO dto) {
         DiscountStructure e = new DiscountStructure();
         e.setManufacturer(dto.getManufacturer());
-        e.setDiscount(dto.getDiscount());
+        e.setDiscountA(dto.getDiscountA());
+        e.setDiscountB(dto.getDiscountB());
+        e.setDiscountC(dto.getDiscountC());
+        e.setActiveSetIndex(dto.getActiveSetIndex());
         return e;
     }
 
@@ -77,7 +85,18 @@ public class DiscountServiceImpl implements DiscountService {
         DiscountStructureDTO dto = new DiscountStructureDTO();
         dto.setDiscountId(e.getDiscountId());
         dto.setManufacturer(e.getManufacturer());
-        dto.setDiscount(e.getDiscount());
+        dto.setDiscountA(e.getDiscountA());
+        dto.setDiscountB(e.getDiscountB());
+        dto.setDiscountC(e.getDiscountC());
+        dto.setActiveSetIndex(e.getActiveSetIndex());
+        // also expose the currently active discount as 'discount' for backward compatibility
+        Integer active = e.getActiveSetIndex() == null ? 0 : e.getActiveSetIndex();
+        Integer value = switch (active) {
+            case 1 -> e.getDiscountB();
+            case 2 -> e.getDiscountC();
+            default -> e.getDiscountA();
+        };
+        dto.setDiscount(value);
         return dto;
     }
 

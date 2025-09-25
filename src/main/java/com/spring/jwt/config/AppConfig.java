@@ -46,7 +46,6 @@ public class AppConfig {
     @Lazy
     private JwtService jwtService;
 
-
     @Bean
     public JwtConfig jwtConfig() {
         return new JwtConfig();

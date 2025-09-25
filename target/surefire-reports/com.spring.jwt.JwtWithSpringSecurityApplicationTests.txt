@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.spring.jwt.JwtWithSpringSecurityApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 19.472 s - in com.spring.jwt.JwtWithSpringSecurityApplicationTests
