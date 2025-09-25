@@ -17,7 +17,10 @@ public class DiscountStructure
     private Integer DiscountId;
 
     private String manufacturer;
+    private Integer discountA;
+    private Integer discountB;
+    private Integer discountC;
 
-    private Integer discount;
+    private Integer activeSetIndex;
 
 }

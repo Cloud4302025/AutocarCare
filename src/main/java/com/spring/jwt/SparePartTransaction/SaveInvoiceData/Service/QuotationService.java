@@ -20,4 +20,6 @@ public interface QuotationService {
     List<QuotationDTO> getAllQuotations();
 
     QuotationDTO updateQuotation(Long quotationId, Map<String, Object> updates);
+
+    void deleteQuotation(Long id);
 }

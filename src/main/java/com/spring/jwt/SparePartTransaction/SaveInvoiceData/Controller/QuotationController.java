@@ -57,4 +57,10 @@ public class QuotationController {
         QuotationDTO updatedQuotation = quotationService.updateQuotation(quotationId, updates);
         return ResponseEntity.ok(updatedQuotation);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteQuotation(@PathVariable("id") Long id) {
+        quotationService.deleteQuotation(id);
+        return ResponseEntity.noContent().build();
+    }
 }

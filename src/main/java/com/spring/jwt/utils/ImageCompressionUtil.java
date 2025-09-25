@@ -28,7 +28,8 @@ public class ImageCompressionUtil {
     private static final long TARGET_SIZE_KB = 100;
 
     public static byte[] compressImage(byte[] originalImageBytes) throws IOException {
-        if (originalImageBytes == null || originalImageBytes.length == 0) {
+        if (originalImageBytes == null || originalImageBytes.length == 0)
+        {
             logger.warn("Empty image data received for compression");
             return null;
         }
@@ -37,7 +38,8 @@ public class ImageCompressionUtil {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(originalImageBytes);
             BufferedImage originalImage = ImageIO.read(inputStream);
 
-            if (originalImage == null) {
+            if (originalImage == null)
+            {
                 logger.error("Could not read image data, returned null BufferedImage");
                 throw new IllegalArgumentException("Invalid image data");
             }
@@ -45,14 +47,16 @@ public class ImageCompressionUtil {
             logger.debug("Original image dimensions: {}x{}", originalImage.getWidth(), originalImage.getHeight());
             BufferedImage resizedImage = resizeImage(originalImage, TARGET_WIDTH, TARGET_HEIGHT);
 
-            if (resizedImage == null) {
+            if (resizedImage == null)
+            {
                 logger.error("Image resizing failed");
                 throw new IOException("Failed to resize image");
             }
 
             byte[] result = compressToTargetSize(resizedImage, TARGET_SIZE_KB);
 
-            if (result == null || result.length == 0) {
+            if (result == null || result.length == 0)
+            {
                 logger.error("Image compression returned empty result");
                 throw new IOException("Failed to compress image");
             }
@@ -61,7 +65,8 @@ public class ImageCompressionUtil {
                     originalImageBytes.length, result.length);
 
             return result;
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             logger.error("Error during image compression: {}", e.getMessage(), e);
             throw new IOException("Error compressing image: " + e.getMessage(), e);
         }
@@ -69,12 +74,14 @@ public class ImageCompressionUtil {
 
     private static BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
         try {
-            if (originalImage == null) {
+            if (originalImage == null)
+            {
                 logger.error("Null image passed to resize function");
                 return null;
             }
 
-            if (originalImage.getWidth() <= 0 || originalImage.getHeight() <= 0) {
+            if (originalImage.getWidth() <= 0 || originalImage.getHeight() <= 0)
+            {
                 logger.error("Invalid image dimensions: {}x{}", originalImage.getWidth(), originalImage.getHeight());
                 return null;
             }
@@ -86,7 +93,8 @@ public class ImageCompressionUtil {
             int newWidth = targetWidth;
             int newHeight = targetHeight;
 
-            if (width > height) {
+            if (width > height)
+            {
                 newHeight = (int) (newWidth / ratio);
             } else {
                 newWidth = (int) (newHeight * ratio);
@@ -97,7 +105,8 @@ public class ImageCompressionUtil {
             return Thumbnails.of(originalImage)
                     .size(newWidth, newHeight)
                     .asBufferedImage();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             logger.error("Failed to resize image: {}", e.getMessage(), e);
             return null;
         } catch (Exception e) {
@@ -106,7 +115,8 @@ public class ImageCompressionUtil {
         }
     }
 
-    private static byte[] compressToTargetSize(BufferedImage image, long targetSizeKB) throws IOException {
+    private static byte[] compressToTargetSize(BufferedImage image, long targetSizeKB) throws IOException
+        {
         if (image == null) {
             logger.error("Null image passed to compress function");
             return null;
@@ -116,12 +126,14 @@ public class ImageCompressionUtil {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         try {
-            while (quality >= 0.1f) {
+            while (quality >= 0.1f)
+            {
                 outputStream.reset();
 
                 // Check if we can get a JPG writer
                 Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
-                if (!writers.hasNext()) {
+                if (!writers.hasNext())
+                {
                     logger.error("No JPEG image writer available");
                     // Fallback to PNG if JPEG not available
                     ImageIO.write(image, "png", outputStream);
@@ -151,7 +163,8 @@ public class ImageCompressionUtil {
             }
 
             return outputStream.toByteArray();
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             logger.error("Error during compression: {}", e.getMessage(), e);
 
             // Fallback: try to save as PNG if JPEG compression fails
@@ -166,7 +179,8 @@ public class ImageCompressionUtil {
         }
     }
 
-    public static CompletableFuture<byte[]> compressImageAsync(byte[] originalImageBytes) {
+    public static CompletableFuture<byte[]> compressImageAsync(byte[] originalImageBytes)
+    {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 return compressImage(originalImageBytes);
