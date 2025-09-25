@@ -5,27 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cd7e60a2-7d57-4d6a-a833-5dc280398d56" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Controller/QuotationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Controller/QuotationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Service/QuotationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Service/QuotationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Service/QuotationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Service/QuotationServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/config/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/DiscountStructureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/controller/DiscountStructureController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/DiscountStructureDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/dto/DiscountStructureDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/DiscountStructure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/entity/DiscountStructure.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/DiscountServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/serviceImpl/DiscountServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/spring/jwt/utils/ImageCompressionUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/spring/jwt/utils/ImageCompressionUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-dev.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application-dev.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application-dev.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Controller/QuotationController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Controller/QuotationController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Service/QuotationService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Service/QuotationService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Service/QuotationServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/SparePartTransaction/SaveInvoiceData/Service/QuotationServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/config/AppConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/controller/DiscountStructureController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/controller/DiscountStructureController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/DiscountStructureDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/dto/DiscountStructureDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/DiscountStructure.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/entity/DiscountStructure.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/spring/jwt/serviceImpl/DiscountServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/spring/jwt/serviceImpl/DiscountServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/JWT-with-Spring-Security-0.0.1-SNAPSHOT.jar" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

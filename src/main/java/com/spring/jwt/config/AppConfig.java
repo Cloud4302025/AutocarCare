@@ -67,6 +67,7 @@ public class AppConfig {
         return new JwtTokenAuthenticationFilter(jwtConfig, jwtService);
     }
 
+
     @Autowired
     public void configGlobal(final AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(customAuthenticationProvider);
