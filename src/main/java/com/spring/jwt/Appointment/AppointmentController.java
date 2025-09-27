@@ -38,6 +38,7 @@ public class AppointmentController {
         return ResponseEntity.ok(savedAppointment);
     }
 
+
     @DeleteMapping("/Deleted")
     public ResponseEntity<Void> deleteAppointment(@RequestParam Integer id) {
         try {
