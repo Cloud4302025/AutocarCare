@@ -15,6 +15,7 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+
     @GetMapping("/getAll")
     public ResponseEntity<List<AppointmentDto>> getAllAppointments() {
         List<AppointmentDto> appointments = appointmentService.getAllAppointments();
