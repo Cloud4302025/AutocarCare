@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,10 +33,10 @@ public class BillServiceImpl implements BillService {
 
         // Convert DTO to entity
         Bill bill = convertToEntity(billDto);
-        
+
         // Save the bill
         Bill savedBill = billRepository.save(bill);
-        
+
         // Return the saved bill as DTO
         return convertToDto(savedBill);
     }
@@ -43,7 +45,7 @@ public class BillServiceImpl implements BillService {
     public BillDto getBillById(Integer billId) {
         Bill bill = billRepository.findById(billId)
                 .orElseThrow(() -> new EntityNotFoundException("Bill not found with ID: " + billId));
-        
+
         return convertToDto(bill);
     }
 
@@ -51,7 +53,7 @@ public class BillServiceImpl implements BillService {
     public BillDto getBillByBillNo(String billNo) {
         Bill bill = billRepository.findByBillNo(billNo)
                 .orElseThrow(() -> new EntityNotFoundException("Bill not found with Bill No: " + billNo));
-        
+
         return convertToDto(bill);
     }
 
@@ -95,26 +97,72 @@ public class BillServiceImpl implements BillService {
                 .collect(Collectors.toList());
     }
 
-    @Override
     @Transactional
+    @Override
     public BillDto updateBill(Integer billId, BillDto billDto) {
-        // Check if bill exists
+        System.out.println("[updateBill] Incoming DTO: billId=" + billId + ", items=" + (billDto.getItems() != null ? billDto.getItems().size() : 0));
         Bill existingBill = billRepository.findById(billId)
-                .orElseThrow(() -> new EntityNotFoundException("Bill not found with ID: " + billId));
-        
-        // Update the bill
-        billDto.setBillId(billId);
-        billDto.setCreatedAt(existingBill.getCreatedAt());
-        billDto.setUpdatedAt(LocalDateTime.now());
-        
-        // Convert DTO to entity
-        Bill bill = convertToEntity(billDto);
-        
-        // Save the updated bill
-        Bill updatedBill = billRepository.save(bill);
-        
-        return convertToDto(updatedBill);
+                .orElseThrow(() -> new RuntimeException("Bill not found with id " + billId));
+
+        existingBill.setBillDate(billDto.getBillDate());
+        existingBill.setUpdatedAt(LocalDateTime.now());
+
+        // STEP 1️⃣ Create a map of existing items for quick lookup
+        Map<Integer, BillItem> existingItemsMap = existingBill.getItems().stream()
+                .filter(i -> i.getBillItemId() != null)
+                .collect(Collectors.toMap(BillItem::getBillItemId, item -> item));
+        // Track IDs that existed prior to update (used to decide safe deletions only among old rows)
+        var existingIdSet = existingBill.getItems().stream()
+                .map(BillItem::getBillItemId)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        // STEP 2️⃣ Iterate through DTO items (update in-place or add new)
+        java.util.Set<Integer> incomingIds = new java.util.HashSet<>();
+        for (BillItemDto dtoItem : billDto.getItems()) {
+            Integer incomingId = dtoItem.getBillItemId() != null ? dtoItem.getBillItemId() : dtoItem.getTransactionId();
+            if (incomingId != null) incomingIds.add(incomingId);
+
+            if (incomingId != null && existingItemsMap.containsKey(incomingId)) {
+                // Update existing managed entity in-place
+                BillItem existingItem = existingItemsMap.get(incomingId);
+                existingItem.setItemName(dtoItem.getItemName());
+                existingItem.setQuantity(dtoItem.getQuantity());
+                existingItem.setRate(dtoItem.getRate());
+                existingItem.setAmount(dtoItem.getAmount());
+                existingItem.setCgstPercentage(dtoItem.getCgstPercentage());
+                existingItem.setSgstPercentage(dtoItem.getSgstPercentage());
+                System.out.println("[updateBill] Updated item id=" + existingItem.getBillItemId());
+            } else {
+                // Create and attach a new entity
+                BillItem newItem = new BillItem();
+                newItem.setItemName(dtoItem.getItemName());
+                newItem.setQuantity(dtoItem.getQuantity());
+                newItem.setRate(dtoItem.getRate());
+                newItem.setAmount(dtoItem.getAmount());
+                newItem.setCgstPercentage(dtoItem.getCgstPercentage());
+                newItem.setSgstPercentage(dtoItem.getSgstPercentage());
+                newItem.setBill(existingBill);
+                existingBill.getItems().add(newItem);
+                System.out.println("[updateBill] Created new item for name=" + dtoItem.getItemName());
+            }
+        }
+
+        // STEP 3️⃣ Remove deleted items (those not in the DTO)
+        // STEP 3️⃣ Remove items only if at least one incoming item carries an identifier
+        // STEP 3️⃣ Do NOT delete absent items during update.
+        // Rationale: frontend may send partial item list when editing a single row.
+        // Deletions should be explicit via a dedicated endpoint.
+        System.out.println("[updateBill] Skipping deletion of items on update (preserve existing rows)");
+
+        // STEP 4️⃣ Nothing else to do; updates done in-place and new items already added
+
+        // STEP 5️⃣ Save and return
+        Bill saved = billRepository.save(existingBill);
+        return convertToDto(saved);
     }
+
+
 
     @Override
     @Transactional
@@ -123,7 +171,7 @@ public class BillServiceImpl implements BillService {
         if (!billRepository.existsById(billId)) {
             throw new EntityNotFoundException("Bill not found with ID: " + billId);
         }
-        
+
         // Delete the bill
         billRepository.deleteById(billId);
     }
@@ -155,14 +203,14 @@ public class BillServiceImpl implements BillService {
                 .updatedAt(bill.getUpdatedAt())
                 .items(new ArrayList<>())
                 .build();
-        
+
         // Convert and add bill items
         if (bill.getItems() != null) {
             billDto.setItems(bill.getItems().stream()
                     .map(this::convertToDto)
                     .collect(Collectors.toList()));
         }
-        
+
         return billDto;
     }
 
@@ -212,7 +260,7 @@ public class BillServiceImpl implements BillService {
                 .updatedAt(billDto.getUpdatedAt())
                 .items(new ArrayList<>())
                 .build();
-        
+
         // Convert and add bill items
         if (billDto.getItems() != null) {
             List<BillItem> billItems = billDto.getItems().stream()
@@ -222,10 +270,10 @@ public class BillServiceImpl implements BillService {
                         return item;
                     })
                     .collect(Collectors.toList());
-            
+
             bill.setItems(billItems);
         }
-        
+
         return bill;
     }
 

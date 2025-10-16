@@ -14,4 +14,4 @@ public interface BillService {
     List<BillDto> getBillsByVendorAndDateRange(Integer vendorId, LocalDateTime startDate, LocalDateTime endDate);
     BillDto updateBill(Integer billId, BillDto billDto);
     void deleteBill(Integer billId);
-} 
+}

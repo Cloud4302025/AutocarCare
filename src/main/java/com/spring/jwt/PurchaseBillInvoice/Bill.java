@@ -82,7 +82,6 @@ public class Bill {
     @Column
     private LocalDateTime updatedAt;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "bill_id")
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BillItem> items = new ArrayList<>();
 } 
